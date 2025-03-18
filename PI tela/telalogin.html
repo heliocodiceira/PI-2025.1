@@ -1,0 +1,46 @@
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+        <label for="username">Usuário</label>
+        <input type="text" id="username" placeholder="Digite seu usuário">
+        
+        <label for="password">Senha</label>
+        <input type="password" id="password" placeholder="Digite sua senha">
+        
+        <label for="userType">Tipo de usuário</label>
+        <select id="userType">
+            <option value="admin">Admin</option>
+            <option value="Perito">Perito</option>
+            <option value="Assitente">Assitente</option>
+            <option value="Gerente">Gerente</option>
+        </select>
+        
+        <button onclick="login()">Entrar</button>
+    </div>
+
+    <script>
+        function login() {
+            var userType = document.getElementById("userType").value;
+    
+            if (userType === "admin") {
+                window.location.href = "admin.html";
+            } else if (userType === "Perito") {
+                window.location.href = "perito.html";
+            } else if (userType === "Assitente") {
+                window.location.href = "assitente.html";
+            } else if (userType === "Gerente") {
+                window.location.href = "gerente.html";
+            } else {
+                alert("Tipo de usuário inválido");
+            }
+        }
+    </script>
+</body>
+</html>
