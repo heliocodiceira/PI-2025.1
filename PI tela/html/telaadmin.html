@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Admin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #007BFF;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            background-color: #007BFF;
+            color: white;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        // Função para redirecionar para a página de cadastro
+        function irParaCadastro() {
+            window.location.href = 'telacadastro.html'; // Altere para o caminho correto da página de cadastro
+        }
+        
+        // Função para redirecionar para a página de edição de usuário
+        function irParaEdicao() {
+            window.location.href = 'telaeditarusuario.html'; // Nome do arquivo da tela de edição de usuário
+        }
+        
+        // Função para excluir usuário
+        function irParaExcluir() {
+            window.location.href = 'telaexcluirusuario.html';
+            // Implementação futura
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Painel Admin</h2>
+        <!-- Ao clicar no botão, chama a função irParaCadastro() -->
+        <button onclick="irParaCadastro()">Cadastrar Usuário</button>
+        <button onclick="irParaEdicao()">Editar Usuário</button>
+        <button onclick="irParaExcluir()">Excluir Usuário</button>
+    </div>
+</body>
+</html>

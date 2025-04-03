@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Usuário</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #007BFF;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            text-align: left;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        input, select {
+            display: block;
+            width: 95%;
+            margin: 5px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            background-color: #007BFF;
+            color: white;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .botoes {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .botoes button {
+            width: 45%;
+        }
+        .voltar {
+            background-color: #007BFF; /* Mesmo padrão do botão salvar */
+        }
+        .voltar:hover {
+            background-color: #0056b3; /* Mesmo padrão do hover do botão salvar */
+        }
+    </style>
+    <script>
+        // Função para validar a senha, ID e confirmar se as senhas são iguais
+        function editarUsuario() {
+            const idUsuario = document.getElementById('idUsuario').value;
+            const email = document.getElementById('email').value;
+            const funcao = document.getElementById('funcao').value;
+            const novaSenha = document.getElementById('novaSenha').value;
+            const confirmaSenha = document.getElementById('confirmaSenha').value;
+
+            // Verifica se o ID do usuário foi informado
+            if (!idUsuario) {
+                alert('Por favor, informe o ID do usuário.');
+                return;
+            }
+
+            // Validação simples para garantir que as senhas coincidam
+            if (novaSenha !== confirmaSenha) {
+                alert('As senhas não coincidem. Tente novamente.');
+                return;
+            }
+
+            // Verifica se os campos obrigatórios estão preenchidos
+            if (email && funcao && novaSenha) {
+                alert('Usuário editado com sucesso!');
+                // Aqui você pode processar os dados (ex: enviar para um servidor)
+                document.getElementById('idUsuario').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('funcao').value = '';
+                document.getElementById('novaSenha').value = '';
+                document.getElementById('confirmaSenha').value = '';
+            } else {
+                alert('Por favor, preencha todos os campos.');
+            }
+        }
+        
+        // Função para voltar para o painel
+        function voltarPainel() {
+            window.location.href = 'painel.html';
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Editar Usuário</h2>
+        <form>
+            <!-- Campo ID do usuário (obrigatório) -->
+            <label for="idUsuario">ID do Usuário</label>
+            <input type="text" id="idUsuario" placeholder="Digite o ID do usuário" required />
+
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="Digite o novo email" />
+
+            <label for="funcao">Função</label>
+            <select id="funcao">
+                <option value="admin">Admin</option>
+                <option value="perito">Perito</option>
+                <option value="assistente">Assistente</option>
+            </select>
+
+            <label for="novaSenha">Nova Senha</label>
+            <input type="password" id="novaSenha" placeholder="Digite a nova senha" />
+
+            <label for="confirmaSenha">Confirmar Nova Senha</label>
+            <input type="password" id="confirmaSenha" placeholder="Confirme a nova senha" />
+
+            <div class="botoes">
+                <button type="button" onclick="editarUsuario()">Salvar</button>
+                <button type="button" class="voltar" onclick="voltarPainel()">Voltar</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

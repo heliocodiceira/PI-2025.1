@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excluir Usuário</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #007BFF;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        .etapa {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            text-align: left;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        input {
+            display: block;
+            width: 95%;
+            margin: 5px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            background-color: #007BFF;
+            color: white;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .botoes {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .botoes button {
+            width: 45%;
+        }
+        .excluir {
+            background-color: #dc3545;
+        }
+        .excluir:hover {
+            background-color: #c82333;
+        }
+        .informacoes-usuario {
+            text-align: left;
+            margin: 15px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        .informacoes-usuario p {
+            margin: 5px 0;
+        }
+        .confirmacao {
+            display: none;
+        }
+        .alerta {
+            color: #dc3545;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        .oculto {
+            display: none;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .mensagem-confirmacao {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 300px;
+        }
+    </style>
+    <script>
+        // Função para solicitar confirmação de exclusão
+        function solicitarExclusao() {
+            const idUsuario = document.getElementById('idUsuario').value;
+            
+            // Verifica se o ID do usuário foi informado
+            if (!idUsuario) {
+                alert('Por favor, informe o ID do usuário.');
+                return;
+            }
+            
+            // Cria e exibe a mensagem de confirmação
+            const overlay = document.createElement('div');
+            overlay.className = 'overlay';
+            
+            const mensagem = document.createElement('div');
+            mensagem.className = 'mensagem-confirmacao';
+            
+            mensagem.innerHTML = `
+                <h3>Confirmar Exclusão</h3>
+                <p>Tem certeza que deseja excluir o usuário com ID: <strong>${idUsuario}</strong>?</p>
+                <p class="alerta">Esta ação não pode ser desfeita!</p>
+                <div class="botoes">
+                    <button type="button" class="excluir" onclick="buscarUsuario()">Confirmar</button>
+                    <button type="button" onclick="fecharConfirmacao()">Cancelar</button>
+                </div>
+            `;
+            
+            overlay.appendChild(mensagem);
+            document.body.appendChild(overlay);
+        }
+        
+        // Função para fechar a mensagem de confirmação
+        function fecharConfirmacao() {
+            const overlay = document.querySelector('.overlay');
+            if (overlay) {
+                document.body.removeChild(overlay);
+            }
+        }
+        
+        // Função para buscar usuário pelo ID
+        function buscarUsuario() {
+            // Fecha a mensagem de confirmação se estiver aberta
+            fecharConfirmacao();
+            
+            const idUsuario = document.getElementById('idUsuario').value;
+            
+            // Verifica se o ID do usuário foi informado
+            if (!idUsuario) {
+                alert('Por favor, informe o ID do usuário.');
+                return;
+            }
+            
+            // Simula a busca do usuário (em um sistema real, isso seria uma chamada ao servidor)
+            // Para fins de demonstração, vamos simular dados fictícios
+            const dadosUsuario = {
+                id: idUsuario,
+                nome: "Usuário Exemplo",
+                email: "usuario" + idUsuario + "@exemplo.com",
+                funcao: "Administrador"
+            };
+            
+            // Exibe as informações do usuário
+            document.getElementById('infoId').textContent = dadosUsuario.id;
+            document.getElementById('infoNome').textContent = dadosUsuario.nome;
+            document.getElementById('infoEmail').textContent = dadosUsuario.email;
+            document.getElementById('infoFuncao').textContent = dadosUsuario.funcao;
+            
+            // Mostra a etapa de confirmação e esconde a etapa de busca
+            document.getElementById('etapaBusca').classList.add('oculto');
+            document.getElementById('etapaConfirmacao').classList.remove('oculto');
+        }
+        
+        // Função para confirmar a exclusão do usuário
+        function confirmarExclusao() {
+            const idUsuario = document.getElementById('infoId').textContent;
+            
+            // Simula a exclusão do usuário (em um sistema real, isso seria uma chamada ao servidor)
+            alert('Usuário ' + idUsuario + ' excluído com sucesso!');
+            
+            // Retorna para a etapa de busca e limpa o campo
+            document.getElementById('idUsuario').value = '';
+            document.getElementById('etapaBusca').classList.remove('oculto');
+            document.getElementById('etapaConfirmacao').classList.add('oculto');
+        }
+        
+        // Função para cancelar a exclusão
+        function cancelarExclusao() {
+            // Retorna para a etapa de busca
+            document.getElementById('etapaBusca').classList.remove('oculto');
+            document.getElementById('etapaConfirmacao').classList.add('oculto');
+        }
+        
+        // Função para voltar para o painel
+        function voltarPainel() {
+            window.location.href = 'painel.html';
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Excluir Usuário</h2>
+        
+        <!-- Etapa 1: Buscar usuário pelo ID -->
+        <div id="etapaBusca" class="etapa">
+            <label for="idUsuario">ID do Usuário</label>
+            <input type="text" id="idUsuario" placeholder="Digite o ID do usuário a excluir" required />
+            
+            <button type="button" class="excluir" onclick="solicitarExclusao()">Excluir</button>
+            <button type="button" onclick="voltarPainel()">Voltar</button>
+        </div>
+        
+        <!-- Etapa 2: Confirmar exclusão -->
+        <div id="etapaConfirmacao" class="etapa oculto">
+            <h3>Confirmar Exclusão</h3>
+            
+            <div class="informacoes-usuario">
+                <p><strong>ID:</strong> <span id="infoId"></span></p>
+                <p><strong>Nome:</strong> <span id="infoNome"></span></p>
+                <p><strong>Email:</strong> <span id="infoEmail"></span></p>
+                <p><strong>Função:</strong> <span id="infoFuncao"></span></p>
+            </div>
+            
+            <p class="alerta">Atenção: Esta ação não pode ser desfeita!</p>
+            
+            <div class="botoes">
+                <button type="button" class="excluir" onclick="confirmarExclusao()">Confirmar</button>
+                <button type="button" onclick="cancelarExclusao()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

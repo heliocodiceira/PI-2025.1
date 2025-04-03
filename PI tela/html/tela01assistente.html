@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca de Casos Forenses</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #007BFF;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 800px;
+            margin: 20px auto;
+        }
+        
+        h1, h2, h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            text-align: left;
+        }
+        
+        .section-title {
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            color: #444;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            text-align: left;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        input, select {
+            display: block;
+            width: 95%;
+            margin: 5px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .botoes {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        button {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            background-color: #007BFF;
+            color: white;
+        }
+        
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+        .btn-secundario {
+            background-color: #6c757d;
+        }
+        
+        .btn-secundario:hover {
+            background-color: #545b62;
+        }
+        
+        .resultados-busca {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .caso-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            background-color: #f8f9fa;
+        }
+        
+        .caso-item:last-child {
+            border-bottom: none;
+        }
+        
+        .caso-item:hover {
+            background-color: #e9ecef;
+            cursor: pointer;
+        }
+        
+        .caso-detalhes {
+            flex-grow: 1;
+        }
+        
+        .caso-acoes {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Busca de Casos Forenses</h1>
+        
+        <div class="section">
+            <h3 class="section-title">Filtros de Busca</h3>
+            
+            <div class="form-group">
+                <label for="numero-caso">Número do Caso:</label>
+                <input type="text" id="numero-caso" placeholder="Digite o número do caso">
+            </div>
+            
+            <div class="form-group">
+                <label for="tipo-caso">Tipo de Caso:</label>
+                <select id="tipo-caso">
+                    <option value="">Todos os Tipos</option>
+                    <option value="criminal">Criminal</option>
+                    <option value="civil">Civil</option>
+                    <option value="investigativo">Investigativo</option>
+                    <option value="outro">Outro</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="data-inicial">Data Inicial:</label>
+                <input type="date" id="data-inicial">
+            </div>
+            
+            <div class="form-group">
+                <label for="data-final">Data Final:</label>
+                <input type="date" id="data-final">
+            </div>
+            
+            <div class="form-group">
+                <label for="status-caso">Status do Caso:</label>
+                <select id="status-caso">
+                    <option value="">Todos os Status</option>
+                    <option value="aberto">Aberto</option>
+                    <option value="em-andamento">Em Andamento</option>
+                    <option value="concluido">Concluído</option>
+                    <option value="arquivado">Arquivado</option>
+                </select>
+            </div>
+            
+            <div class="botoes">
+                <button onclick="buscarCasos()">Buscar Casos</button>
+                <button class="btn-secundario" onclick="limparFiltros()">Limpar Filtros</button>
+            </div>
+        </div>
+        
+        <div class="section resultados-busca" id="resultados-busca">
+            <h3 class="section-title">Resultados da Busca</h3>
+            <p id="mensagem-resultados">Nenhum resultado encontrado. Utilize os filtros acima para buscar casos.</p>
+        </div>
+    </div>
+
+    <script>
+        // Dados de exemplo de casos (em um cenário real, estes seriam carregados de um backend)
+        const casosMock = [
+            {
+                id: 'C2023-001',
+                tipo: 'criminal',
+                descricao: 'Homicídio na Avenida Principal',
+                data: '2023-05-15',
+                status: 'em-andamento',
+                responsavel: 'Det. Maria Silva'
+            },
+            {
+                id: 'C2023-002',
+                tipo: 'investigativo',
+                descricao: 'Furto em Residência',
+                data: '2023-06-22',
+                status: 'aberto',
+                responsavel: 'Inv. João Santos'
+            },
+            {
+                id: 'C2023-003',
+                tipo: 'civil',
+                descricao: 'Disputa de Propriedade',
+                data: '2023-04-10',
+                status: 'concluido',
+                responsavel: 'Adv. Ana Oliveira'
+            }
+        ];
+
+        function buscarCasos() {
+            const numeroCaso = document.getElementById('numero-caso').value.toLowerCase();
+            const tipoCaso = document.getElementById('tipo-caso').value;
+            const dataInicial = document.getElementById('data-inicial').value;
+            const dataFinal = document.getElementById('data-final').value;
+            const statusCaso = document.getElementById('status-caso').value;
+            const resultadosContainer = document.getElementById('resultados-busca');
+            const mensagemResultados = document.getElementById('mensagem-resultados');
+
+            // Limpar resultados anteriores
+            resultadosContainer.innerHTML = '<h3 class="section-title">Resultados da Busca</h3>';
+
+            // Filtrar casos
+            const casosFiltrados = casosMock.filter(caso => {
+                const matchNumeroCaso = !numeroCaso || caso.id.toLowerCase().includes(numeroCaso);
+                const matchTipoCaso = !tipoCaso || caso.tipo === tipoCaso;
+                const matchDataInicial = !dataInicial || caso.data >= dataInicial;
+                const matchDataFinal = !dataFinal || caso.data <= dataFinal;
+                const matchStatusCaso = !statusCaso || caso.status === statusCaso;
+
+                return matchNumeroCaso && matchTipoCaso && matchDataInicial && matchDataFinal && matchStatusCaso;
+            });
+
+            // Exibir resultados
+            if (casosFiltrados.length > 0) {
+                casosFiltrados.forEach(caso => {
+                    const casoElement = document.createElement('div');
+                    casoElement.className = 'caso-item';
+                    casoElement.innerHTML = `
+                        <div class="caso-detalhes">
+                            <strong>${caso.id}</strong> - ${caso.descricao}<br>
+                            <small>Data: ${formatarData(caso.data)} | Status: ${traduzirStatus(caso.status)} | Responsável: ${caso.responsavel}</small>
+                        </div>
+                        <div class="caso-acoes">
+                            <button onclick="visualizarCaso('${caso.id}')">Visualizar</button>
+                            <button onclick="selecionarCaso('${caso.id}')">Selecionar</button>
+                        </div>
+                    `;
+                    resultadosContainer.appendChild(casoElement);
+                });
+            } else {
+                const semResultados = document.createElement('p');
+                semResultados.textContent = 'Nenhum caso encontrado com os filtros selecionados.';
+                resultadosContainer.appendChild(semResultados);
+            }
+        }
+
+        function limparFiltros() {
+            document.getElementById('numero-caso').value = '';
+            document.getElementById('tipo-caso').selectedIndex = 0;
+            document.getElementById('data-inicial').value = '';
+            document.getElementById('data-final').value = '';
+            document.getElementById('status-caso').selectedIndex = 0;
+            
+            // Limpar resultados
+            const resultadosContainer = document.getElementById('resultados-busca');
+            resultadosContainer.innerHTML = `
+                <h3 class="section-title">Resultados da Busca</h3>
+                <p id="mensagem-resultados">Nenhum resultado encontrado. Utilize os filtros acima para buscar casos.</p>
+            `;
+        }
+
+        function visualizarCaso(id) {
+            const caso = casosMock.find(c => c.id === id);
+            
+            // Criar overlay de visualização
+            const overlay = document.createElement('div');
+            overlay.className = 'overlay';
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <h2>Detalhes do Caso ${caso.id}</h2>
+                <p><strong>Tipo:</strong> ${traduzirTipo(caso.tipo)}</p>
+                <p><strong>Descrição:</strong> ${caso.descricao}</p>
+                <p><strong>Data:</strong> ${formatarData(caso.data)}</p>
+                <p><strong>Status:</strong> ${traduzirStatus(caso.status)}</p>
+                <p><strong>Responsável:</strong> ${caso.responsavel}</p>
+                <button onclick="this.closest('.overlay').remove()">Fechar</button>
+            `;
+            
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+        }
+
+        function selecionarCaso(id) {
+            const caso = casosMock.find(c => c.id === id);
+            
+            // Salvar caso selecionado no localStorage para uso na próxima tela
+            localStorage.setItem('casoSelecionado', JSON.stringify(caso));
+            
+            // Redirecionar para a tela de evidências
+            window.location.href = 'telaassistente.html';
+        }
+
+        // Funções auxiliares de formatação
+        function formatarData(data) {
+            return new Date(data).toLocaleDateString('pt-BR');
+        }
+
+        function traduzirStatus(status) {
+            const statusMap = {
+                'aberto': 'Aberto',
+                'em-andamento': 'Em Andamento',
+                'concluido': 'Concluído',
+                'arquivado': 'Arquivado'
+            };
+            return statusMap[status] || status;
+        }
+
+        function traduzirTipo(tipo) {
+            const tipoMap = {
+                'criminal': 'Criminal',
+                'civil': 'Civil',
+                'investigativo': 'Investigativo',
+                'outro': 'Outro'
+            };
+            return tipoMap[tipo] || tipo;
+        }
+    </script>
+</body>
+</html>

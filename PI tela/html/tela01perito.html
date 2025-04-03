@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Registro de Ocorrências Criminais</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #007BFF;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 800px;
+            margin: 40px auto;
+        }
+        
+        h1, h2, h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            text-align: left;
+        }
+        
+        .section-title {
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            color: #444;
+        }
+        
+        .botoes {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .botoes a, .botoes button {
+            width: 45%;
+            margin: 10px 0;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn-submit {
+            background-color: #007BFF;
+            color: white;
+        }
+        
+        .btn-submit:hover {
+            background-color: #0056b3;
+        }
+        
+        .btn-busca {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn-busca:hover {
+            background-color: #218838;
+        }
+        
+        .excluir {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .excluir:hover {
+            background-color: #c82333;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .mensagem-confirmacao {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 300px;
+        }
+        
+        .mensagem-confirmacao button {
+            margin-top: 15px;
+            padding: 8px 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .mensagem-confirmacao button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Registro de Ocorrência Criminal</h1>
+        
+        <div class="section">
+            <h3 class="section-title">Buscar Caso Existente</h3>
+            <p>Clique no botão abaixo para carregar um caso previamente registrado.</p>
+        </div>
+        
+        <!-- Botões -->
+        <div class="botoes">
+            <a href="telaregistro.html" class="btn-submit">Registrar Ocorrência</a>
+            <button type="button" class="btn-busca">Buscar Caso Existente</button>
+            <button type="button" class="excluir">Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        // Função para buscar e carregar caso existente
+        document.querySelector('.btn-busca').addEventListener('click', function() {
+            // Criar input de arquivo dinamicamente
+            const inputBusca = document.createElement('input');
+            inputBusca.type = 'file';
+            inputBusca.accept = '.json';
+            
+            inputBusca.addEventListener('change', function(evento) {
+                const arquivo = evento.target.files[0];
+                if (arquivo) {
+                    const leitor = new FileReader();
+                    
+                    leitor.onload = function(e) {
+                        try {
+                            // Parsear dados do arquivo JSON
+                            const dadosCaso = JSON.parse(e.target.result);
+                            
+                            // Criar overlay de confirmação
+                            const overlay = document.createElement('div');
+                            overlay.className = 'overlay';
+                            
+                            const mensagemConfirmacao = document.createElement('div');
+                            mensagemConfirmacao.className = 'mensagem-confirmacao';
+                            mensagemConfirmacao.innerHTML = `
+                                <h3>Caso Carregado</h3>
+                                <p>O caso foi carregado com sucesso!</p>
+                                <button onclick="this.closest('.overlay').remove()">Fechar</button>
+                            `;
+                            
+                            overlay.appendChild(mensagemConfirmacao);
+                            document.body.appendChild(overlay);
+                            
+                            // Lógica de preenchimento do formulário seria implementada aqui
+                            console.log('Dados do caso carregado:', dadosCaso);
+                        } catch (erro) {
+                            // Alerta de erro
+                            const overlay = document.createElement('div');
+                            overlay.className = 'overlay';
+                            
+                            const mensagemErro = document.createElement('div');
+                            mensagemErro.className = 'mensagem-confirmacao';
+                            mensagemErro.innerHTML = `
+                                <h3>Erro ao Carregar</h3>
+                                <p>Não foi possível carregar o caso. Verifique o arquivo.</p>
+                                <button onclick="this.closest('.overlay').remove()">Fechar</button>
+                            `;
+                            
+                            overlay.appendChild(mensagemErro);
+                            document.body.appendChild(overlay);
+                            
+                            console.error(erro);
+                        }
+                    };
+                    
+                    leitor.readAsText(arquivo);
+                }
+            });
+            
+            // Acionar seleção de arquivo
+            inputBusca.click();
+        });
+    </script>
+</body>
+</html>
