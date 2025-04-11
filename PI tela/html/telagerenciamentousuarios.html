@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gerenciamento de Usuários</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #007BFF;
+            margin: 0;
+            padding: 20px 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 900px;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        button {
+            display: inline-block;
+            width: calc(50% - 10px);
+            margin: 5px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            background-color: #007BFF;
+            color: white;
+        }
+        @media (max-width: 600px) {
+            button {
+                width: 100%;
+            }
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #formCadastro, #formEdicao {
+            display: none;
+            margin-top: 20px;
+            text-align: left;
+            border-top: 1px solid #ccc;
+            padding-top: 20px;
+        }
+        #listaUsuarios {
+            width: 100%;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .botoes-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .section-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .section-buttons button {
+            width: 48%;
+        }
+        .voltar {
+            margin-top: 10px;
+            background-color: #dc3545;
+        }
+        .voltar:hover {
+            background-color: #c82333;
+        }
+        
+        .novo-btn {
+            background-color: #28a745;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        
+        .novo-btn:hover {
+            background-color: #218838;
+        }
+        
+        .acoes-btn {
+            display: inline-block;
+            width: auto;
+            padding: 5px 10px;
+            margin: 2px;
+            font-size: 14px;
+        }
+        
+        .editar-btn {
+            background-color: #ffc107;
+            color: #000;
+        }
+        
+        .editar-btn:hover {
+            background-color: #e0a800;
+        }
+        
+        .excluir-btn {
+            background-color: #dc3545;
+        }
+        
+        .excluir-btn:hover {
+            background-color: #c82333;
+        }
+        
+        /* Estilos para o formulário */
+        label {
+            display: block;
+            text-align: left;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        input, select, textarea {
+            display: block;
+            width: 95%;
+            margin: 5px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .sucesso {
+            color: green;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+        }
+        
+        .modal-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .modal-btn {
+            width: 45%;
+        }
+        
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .search-input {
+            flex-grow: 1;
+            padding: 10px;
+        }
+        
+        .search-btn {
+            width: auto;
+            white-space: nowrap;
+        }
+        
+        .sem-resultados {
+            text-align: center;
+            padding: 30px;
+            font-style: italic;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Sistema de Gerenciamento de Usuários</h2>
+        
+        <!-- Seção de gerenciamento de usuários -->
+        <div id="secaoUsuarios">
+            <button class="novo-btn" id="btnNovoUsuario">Adicionar Novo Usuário</button>
+            
+            <div class="search-container">
+                <input type="text" id="buscaUsuario" class="search-input" placeholder="Buscar usuário...">
+                <button class="search-btn" id="btnBuscarUsuario">Buscar</button>
+            </div>
+            
+            <div id="listaUsuarios">
+                <table id="tabelaUsuarios">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>CPF</th>
+                            <th>Matrícula</th>
+                            <th>Cargo</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>João Silva</td>
+                            <td>joao.silva@exemplo.com</td>
+                            <td>123.456.789-10</td>
+                            <td>MAT001</td>
+                            <td>Administrador</td>
+                            <td>
+                                <button class="acoes-btn editar-btn" onclick="editarUsuario(1)">Editar</button>
+                                <button class="acoes-btn excluir-btn" onclick="confirmarExclusao(1)">Excluir</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Maria Santos</td>
+                            <td>maria.santos@exemplo.com</td>
+                            <td>987.654.321-00</td>
+                            <td>MAT002</td>
+                            <td>Analista</td>
+                            <td>
+                                <button class="acoes-btn editar-btn" onclick="editarUsuario(2)">Editar</button>
+                                <button class="acoes-btn excluir-btn" onclick="confirmarExclusao(2)">Excluir</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Pedro Oliveira</td>
+                            <td>pedro.oliveira@exemplo.com</td>
+                            <td>456.789.123-45</td>
+                            <td>MAT003</td>
+                            <td>Usuário</td>
+                            <td>
+                                <button class="acoes-btn editar-btn" onclick="editarUsuario(3)">Editar</button>
+                                <button class="acoes-btn excluir-btn" onclick="confirmarExclusao(3)">Excluir</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="formCadastro">
+                <h3>Cadastrar Novo Usuário</h3>
+                <form id="formNovoUsuario">
+                    <label for="nomeUsuario">Nome Completo:</label>
+                    <input type="text" id="nomeUsuario" required>
+                    
+                    <label for="emailUsuario">Email:</label>
+                    <input type="email" id="emailUsuario" required>
+                    
+                    <label for="cpfUsuario">CPF:</label>
+                    <input type="text" id="cpfUsuario" required placeholder="000.000.000-00">
+                    
+                    <label for="matriculaUsuario">Matrícula:</label>
+                    <input type="text" id="matriculaUsuario" required>
+                    
+                    <label for="senhaUsuario">Senha:</label>
+                    <input type="password" id="senhaUsuario" required>
+                    
+                    <label for="confirmarSenha">Confirmar Senha:</label>
+                    <input type="password" id="confirmarSenha" required>
+                    
+                    <label for="cargoUsuario">Cargo:</label>
+                    <select id="cargoUsuario">
+                        <option value="administrador">Administrador</option>
+                        <option value="analista">Analista</option>
+                        <option value="usuario">Usuário</option>
+                    </select>
+                    
+                    <div class="section-buttons">
+                        <button type="submit" id="btnSalvarUsuario">Salvar</button>
+                        <button type="button" class="voltar" id="btnCancelarCadastro">Cancelar</button>
+                    </div>
+                </form>
+                <div class="sucesso" id="msgSucessoCadastro">Usuário cadastrado com sucesso!</div>
+            </div>
+            
+            <div id="formEdicao">
+                <h3>Editar Usuário</h3>
+                <form id="formEditarUsuario">
+                    <input type="hidden" id="idUsuarioEdicao">
+                    
+                    <label for="nomeUsuarioEdicao">Nome Completo:</label>
+                    <input type="text" id="nomeUsuarioEdicao" required>
+                    
+                    <label for="emailUsuarioEdicao">Email:</label>
+                    <input type="email" id="emailUsuarioEdicao" required>
+                    
+                    <label for="cpfUsuarioEdicao">CPF:</label>
+                    <input type="text" id="cpfUsuarioEdicao" required placeholder="000.000.000-00">
+                    
+                    <label for="matriculaUsuarioEdicao">Matrícula:</label>
+                    <input type="text" id="matriculaUsuarioEdicao" required>
+                    
+                    <label for="cargoUsuarioEdicao">Cargo:</label>
+                    <select id="cargoUsuarioEdicao">
+                        <option value="administrador">Administrador</option>
+                        <option value="analista">Analista</option>
+                        <option value="usuario">Usuário</option>
+                    </select>
+                    
+                    <div class="section-buttons">
+                        <button type="submit" id="btnSalvarEdicao">Atualizar</button>
+                        <button type="button" class="voltar" id="btnCancelarEdicao">Cancelar</button>
+                    </div>
+                </form>
+                <div class="sucesso" id="msgSucessoEdicao">Usuário atualizado com sucesso!</div>
+            </div>
+        </div>
+        
+        <!-- Modal de confirmação de exclusão -->
+        <div id="modalExclusao" class="modal">
+            <div class="modal-content">
+                <h3>Confirmar Exclusão</h3>
+                <p>Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.</p>
+                <div class="modal-buttons">
+                    <button id="btnConfirmarExclusao" class="modal-btn excluir-btn">Sim, Excluir</button>
+                    <button id="btnCancelarExclusao" class="modal-btn">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variáveis globais
+        let listaUsuarios = [
+            { id: 1, nome: 'João Silva', email: 'joao.silva@exemplo.com', cpf: '123.456.789-10', matricula: 'MAT001', cargo: 'Administrador' },
+            { id: 2, nome: 'Maria Santos', email: 'maria.santos@exemplo.com', cpf: '987.654.321-00', matricula: 'MAT002', cargo: 'Analista' },
+            { id: 3, nome: 'Pedro Oliveira', email: 'pedro.oliveira@exemplo.com', cpf: '456.789.123-45', matricula: 'MAT003', cargo: 'Usuário' }
+        ];
+        let proximoId = 4;
+        let idExclusao = null;
+
+        // Elementos DOM
+        const btnNovoUsuario = document.getElementById('btnNovoUsuario');
+        const formCadastro = document.getElementById('formCadastro');
+        const formEdicao = document.getElementById('formEdicao');
+        const listaUsuariosDiv = document.getElementById('listaUsuarios');
+        const btnCancelarCadastro = document.getElementById('btnCancelarCadastro');
+        const btnCancelarEdicao = document.getElementById('btnCancelarEdicao');
+        const formNovoUsuario = document.getElementById('formNovoUsuario');
+        const formEditarUsuario = document.getElementById('formEditarUsuario');
+        const tabelaUsuarios = document.getElementById('tabelaUsuarios');
+        const modalExclusao = document.getElementById('modalExclusao');
+        const btnConfirmarExclusao = document.getElementById('btnConfirmarExclusao');
+        const btnCancelarExclusao = document.getElementById('btnCancelarExclusao');
+        const buscaUsuario = document.getElementById('buscaUsuario');
+        const btnBuscarUsuario = document.getElementById('btnBuscarUsuario');
+        const msgSucessoCadastro = document.getElementById('msgSucessoCadastro');
+        const msgSucessoEdicao = document.getElementById('msgSucessoEdicao');
+
+        // Event Listeners
+        btnNovoUsuario.addEventListener('click', () => {
+            listaUsuariosDiv.style.display = 'none';
+            formCadastro.style.display = 'block';
+        });
+
+        btnCancelarCadastro.addEventListener('click', () => {
+            formCadastro.style.display = 'none';
+            listaUsuariosDiv.style.display = 'block';
+            document.getElementById('formNovoUsuario').reset();
+        });
+
+        btnCancelarEdicao.addEventListener('click', () => {
+            formEdicao.style.display = 'none';
+            listaUsuariosDiv.style.display = 'block';
+        });
+
+        btnCancelarExclusao.addEventListener('click', () => {
+            modalExclusao.style.display = 'none';
+        });
+
+        btnBuscarUsuario.addEventListener('click', filtrarUsuarios);
+        buscaUsuario.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                filtrarUsuarios();
+            }
+        });
+
+        // Formulário de cadastro
+        formNovoUsuario.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const nome = document.getElementById('nomeUsuario').value;
+            const email = document.getElementById('emailUsuario').value;
+            const cpf = document.getElementById('cpfUsuario').value;
+            const matricula = document.getElementById('matriculaUsuario').value;
+            const senha = document.getElementById('senhaUsuario').value;
+            const confirmarSenha = document.getElementById('confirmarSenha').value;
+            const cargo = document.getElementById('cargoUsuario').value;
+            
+            if (senha !== confirmarSenha) {
+                alert('As senhas não conferem!');
+                return;
+            }
+            
+            const novoUsuario = {
+                id: proximoId++,
+                nome: nome,
+                email: email,
+                cpf: cpf,
+                matricula: matricula,
+                cargo: cargo
+            };
+            
+            listaUsuarios.push(novoUsuario);
+            atualizarTabelaUsuarios();
+            
+            // Mostrar mensagem de sucesso
+            msgSucessoCadastro.style.display = 'block';
+            setTimeout(() => {
+                msgSucessoCadastro.style.display = 'none';
+                formCadastro.style.display = 'none';
+                listaUsuariosDiv.style.display = 'block';
+                document.getElementById('formNovoUsuario').reset();
+            }, 2000);
+        });
+
+        // Formulário de edição
+        formEditarUsuario.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = parseInt(document.getElementById('idUsuarioEdicao').value);
+            const nome = document.getElementById('nomeUsuarioEdicao').value;
+            const email = document.getElementById('emailUsuarioEdicao').value;
+            const cpf = document.getElementById('cpfUsuarioEdicao').value;
+            const matricula = document.getElementById('matriculaUsuarioEdicao').value;
+            const cargo = document.getElementById('cargoUsuarioEdicao').value;
+            
+            const index = listaUsuarios.findIndex(u => u.id === id);
+            if (index !== -1) {
+                listaUsuarios[index] = { id, nome, email, cpf, matricula, cargo };
+                atualizarTabelaUsuarios();
+                
+                // Mostrar mensagem de sucesso
+                msgSucessoEdicao.style.display = 'block';
+                setTimeout(() => {
+                    msgSucessoEdicao.style.display = 'none';
+                    formEdicao.style.display = 'none';
+                    listaUsuariosDiv.style.display = 'block';
+                }, 2000);
+            }
+        });
+
+        // Botão confirmar exclusão
+        btnConfirmarExclusao.addEventListener('click', () => {
+            if (idExclusao !== null) {
+                listaUsuarios = listaUsuarios.filter(u => u.id !== idExclusao);
+                atualizarTabelaUsuarios();
+                modalExclusao.style.display = 'none';
+                idExclusao = null;
+            }
+        });
+
+        // Funções
+        function atualizarTabelaUsuarios(usuariosFiltrados = null) {
+            const dados = usuariosFiltrados || listaUsuarios;
+            const tbody = tabelaUsuarios.querySelector('tbody');
+            tbody.innerHTML = '';
+            
+            if (dados.length === 0) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = '<td colspan="7" class="sem-resultados">Nenhum usuário encontrado</td>';
+                tbody.appendChild(tr);
+                return;
+            }
+            
+            dados.forEach(usuario => {
+                const tr = document.createElement('tr');
+                
+                tr.innerHTML = `
+                    <td>${usuario.id}</td>
+                    <td>${usuario.nome}</td>
+                    <td>${usuario.email}</td>
+                    <td>${usuario.cpf}</td>
+                    <td>${usuario.matricula}</td>
+                    <td>${usuario.cargo}</td>
+                    <td>
+                        <button class="acoes-btn editar-btn" onclick="editarUsuario(${usuario.id})">Editar</button>
+                        <button class="acoes-btn excluir-btn" onclick="confirmarExclusao(${usuario.id})">Excluir</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function editarUsuario(id) {
+            const usuario = listaUsuarios.find(u => u.id === id);
+            if (usuario) {
+                document.getElementById('idUsuarioEdicao').value = usuario.id;
+                document.getElementById('nomeUsuarioEdicao').value = usuario.nome;
+                document.getElementById('emailUsuarioEdicao').value = usuario.email;
+                document.getElementById('cpfUsuarioEdicao').value = usuario.cpf;
+                document.getElementById('matriculaUsuarioEdicao').value = usuario.matricula;
+                document.getElementById('cargoUsuarioEdicao').value = usuario.cargo;
+                
+                listaUsuariosDiv.style.display = 'none';
+                formEdicao.style.display = 'block';
+            }
+        }
+
+        function confirmarExclusao(id) {
+            idExclusao = id;
+            modalExclusao.style.display = 'block';
+        }
+
+        function filtrarUsuarios() {
+            const termoBusca = buscaUsuario.value.toLowerCase();
+            if (termoBusca.trim() === '') {
+                atualizarTabelaUsuarios();
+                return;
+            }
+            
+            const usuariosFiltrados = listaUsuarios.filter(usuario => 
+                usuario.nome.toLowerCase().includes(termoBusca) || 
+                usuario.email.toLowerCase().includes(termoBusca) ||
+                usuario.cpf.includes(termoBusca) ||
+                usuario.matricula.toLowerCase().includes(termoBusca) ||
+                usuario.cargo.toLowerCase().includes(termoBusca)
+            );
+            
+            atualizarTabelaUsuarios(usuariosFiltrados);
+        }
+
+        // Tornar funções acessíveis globalmente
+        window.editarUsuario = editarUsuario;
+        window.confirmarExclusao = confirmarExclusao;
+
+        // Inicialização
+        atualizarTabelaUsuarios();
+    </script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Busca de Casos Forenses</title>
+    <title>Sistema de Laudos Odontológicos Forenses</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -59,7 +59,7 @@
             margin-top: 10px;
         }
         
-        input, select {
+        input, select, textarea {
             display: block;
             width: 95%;
             margin: 5px 0;
@@ -69,11 +69,15 @@
             font-size: 14px;
         }
         
-        .botoes {
+        .form-row {
             display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .form-col {
+            flex: 1;
+            min-width: 250px;
         }
         
         button {
@@ -93,277 +97,1412 @@
             background-color: #0056b3;
         }
         
-        .btn-secundario {
-            background-color: #6c757d;
+        .dental-record {
+            background-color: #f0f8ff;
         }
         
-        .btn-secundario:hover {
-            background-color: #545b62;
+        .file-list {
+            margin: 10px 0;
+            padding: 0;
+            list-style: none;
         }
         
-        .resultados-busca {
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #e9ecef;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+        
+        .file-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .file-icon {
+            margin-right: 10px;
+            color: #6c757d;
+        }
+        
+        .file-name {
+            font-weight: 500;
+        }
+        
+        .file-size {
+            color: #6c757d;
+            font-size: 0.85em;
+            margin-left: 10px;
+        }
+        
+        .file-actions button {
+            width: auto;
+            padding: 4px 8px;
+            font-size: 12px;
+            margin: 0 2px;
+        }
+        
+        .remove-file {
+            background-color: #dc3545;
+        }
+        
+        .imaging-collection {
             margin-top: 20px;
+            padding: 15px;
+            background-color: #e9f7ff;
+            border-radius: 5px;
+            border: 1px solid #b8daff;
+        }
+        
+        .action-tools {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .action-tools button {
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .status-tag {
+            background-color: #007BFF;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        
+        .tag {
+            background: #e2e6ea;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            font-size: 0.85em;
+        }
+        
+        .tag-remove {
+            margin-left: 5px;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        
+        .odontogram {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
             border: 1px solid #ddd;
             border-radius: 5px;
-            max-height: 300px;
-            overflow-y: auto;
         }
         
-        .caso-item {
+        .odontogram h4 {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .dental-chart {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            background-color: #f8f9fa;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2px;
+            margin-bottom: 15px;
         }
         
-        .caso-item:last-child {
-            border-bottom: none;
-        }
-        
-        .caso-item:hover {
-            background-color: #e9ecef;
-            cursor: pointer;
-        }
-        
-        .caso-detalhes {
-            flex-grow: 1;
-        }
-        
-        .caso-acoes {
-            display: flex;
-            gap: 5px;
-        }
-        
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+        .tooth {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #ccc;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            font-size: 12px;
+            cursor: pointer;
+            position: relative;
         }
         
-        .modal {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 80%;
-            overflow-y: auto;
+        .tooth:hover {
+            background-color: #e9ecef;
+        }
+        
+        .tooth-selected {
+            background-color: #b8daff;
+        }
+        
+        .tooth-label {
+            position: absolute;
+            top: -15px;
+            font-size: 10px;
+            color: #6c757d;
+        }
+        
+        .tab-container {
+            margin-top: 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 15px;
+        }
+        
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+        
+        .tab.active {
+            background-color: #fff;
+            border-color: #ddd;
+            border-bottom-color: transparent;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .alert {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Para telas menores */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .form-col {
+                width: 100%;
+            }
+            
+            .action-tools {
+                flex-direction: column;
+            }
+            
+            .action-tools button {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Busca de Casos Forenses</h1>
-        
-        <div class="section">
-            <h3 class="section-title">Filtros de Busca</h3>
+        <div class="section dental-record">
+            <h3 class="section-title">Sistema de Laudos Odontológicos Forenses</h3>
+            <span class="status-tag">Caso #FO-2025-01298</span>
+            <span class="status-tag">Em andamento</span>
             
-            <div class="form-group">
-                <label for="numero-caso">Número do Caso:</label>
-                <input type="text" id="numero-caso" placeholder="Digite o número do caso">
-            </div>
-            
-            <div class="form-group">
-                <label for="tipo-caso">Tipo de Caso:</label>
-                <select id="tipo-caso">
-                    <option value="">Todos os Tipos</option>
-                    <option value="criminal">Criminal</option>
-                    <option value="civil">Civil</option>
-                    <option value="investigativo">Investigativo</option>
-                    <option value="outro">Outro</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="data-inicial">Data Inicial:</label>
-                <input type="date" id="data-inicial">
-            </div>
-            
-            <div class="form-group">
-                <label for="data-final">Data Final:</label>
-                <input type="date" id="data-final">
-            </div>
-            
-            <div class="form-group">
-                <label for="status-caso">Status do Caso:</label>
-                <select id="status-caso">
-                    <option value="">Todos os Status</option>
-                    <option value="aberto">Aberto</option>
-                    <option value="em-andamento">Em Andamento</option>
-                    <option value="concluido">Concluído</option>
-                    <option value="arquivado">Arquivado</option>
-                </select>
-            </div>
-            
-            <div class="botoes">
-                <button onclick="buscarCasos()">Buscar Casos</button>
-                <button class="btn-secundario" onclick="limparFiltros()">Limpar Filtros</button>
-            </div>
-        </div>
-        
-        <div class="section resultados-busca" id="resultados-busca">
-            <h3 class="section-title">Resultados da Busca</h3>
-            <p id="mensagem-resultados">Nenhum resultado encontrado. Utilize os filtros acima para buscar casos.</p>
-        </div>
-    </div>
-
-    <script>
-        // Dados de exemplo de casos (em um cenário real, estes seriam carregados de um backend)
-        const casosMock = [
-            {
-                id: 'C2023-001',
-                tipo: 'criminal',
-                descricao: 'Homicídio na Avenida Principal',
-                data: '2023-05-15',
-                status: 'em-andamento',
-                responsavel: 'Det. Maria Silva'
-            },
-            {
-                id: 'C2023-002',
-                tipo: 'investigativo',
-                descricao: 'Furto em Residência',
-                data: '2023-06-22',
-                status: 'aberto',
-                responsavel: 'Inv. João Santos'
-            },
-            {
-                id: 'C2023-003',
-                tipo: 'civil',
-                descricao: 'Disputa de Propriedade',
-                data: '2023-04-10',
-                status: 'concluido',
-                responsavel: 'Adv. Ana Oliveira'
-            }
-        ];
-
-        function buscarCasos() {
-            const numeroCaso = document.getElementById('numero-caso').value.toLowerCase();
-            const tipoCaso = document.getElementById('tipo-caso').value;
-            const dataInicial = document.getElementById('data-inicial').value;
-            const dataFinal = document.getElementById('data-final').value;
-            const statusCaso = document.getElementById('status-caso').value;
-            const resultadosContainer = document.getElementById('resultados-busca');
-            const mensagemResultados = document.getElementById('mensagem-resultados');
-
-            // Limpar resultados anteriores
-            resultadosContainer.innerHTML = '<h3 class="section-title">Resultados da Busca</h3>';
-
-            // Filtrar casos
-            const casosFiltrados = casosMock.filter(caso => {
-                const matchNumeroCaso = !numeroCaso || caso.id.toLowerCase().includes(numeroCaso);
-                const matchTipoCaso = !tipoCaso || caso.tipo === tipoCaso;
-                const matchDataInicial = !dataInicial || caso.data >= dataInicial;
-                const matchDataFinal = !dataFinal || caso.data <= dataFinal;
-                const matchStatusCaso = !statusCaso || caso.status === statusCaso;
-
-                return matchNumeroCaso && matchTipoCaso && matchDataInicial && matchDataFinal && matchStatusCaso;
-            });
-
-            // Exibir resultados
-            if (casosFiltrados.length > 0) {
-                casosFiltrados.forEach(caso => {
-                    const casoElement = document.createElement('div');
-                    casoElement.className = 'caso-item';
-                    casoElement.innerHTML = `
-                        <div class="caso-detalhes">
-                            <strong>${caso.id}</strong> - ${caso.descricao}<br>
-                            <small>Data: ${formatarData(caso.data)} | Status: ${traduzirStatus(caso.status)} | Responsável: ${caso.responsavel}</small>
+            <div class="tab-container">
+                <div class="tabs">
+                    <div class="tab active" data-tab="dados-gerais">Dados Gerais</div>
+                    <div class="tab" data-tab="exame-post-mortem">Exame Post-Mortem</div>
+                    <div class="tab" data-tab="dados-ante-mortem">Dados Ante-Mortem</div>
+                    <div class="tab" data-tab="comparacao">Comparação</div>
+                    <div class="tab" data-tab="laudo-final">Laudo Final</div>
+                </div>
+                
+                <!-- Dados Gerais Tab -->
+                <div class="tab-content active" id="dados-gerais">
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="tipo-pericia">Tipo de Perícia:</label>
+                                <select id="tipo-pericia" name="tipo-pericia">
+                                    <option value="" selected disabled>-- Selecione o tipo --</option>
+                                    <option value="identificacao">Identificação Odontológica</option>
+                                    <option value="estimativa-idade">Estimativa de Idade</option>
+                                    <option value="lesao-corporal">Lesão Corporal</option>
+                                    <option value="marcas-mordida">Análise de Marcas de Mordida</option>
+                                    <option value="coleta-dna">Coleta de DNA/Saliva</option>
+                                    <option value="outro">Outro</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="caso-acoes">
-                            <button onclick="visualizarCaso('${caso.id}')">Visualizar</button>
-                            <button onclick="selecionarCaso('${caso.id}')">Selecionar</button>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="prioridade">Prioridade:</label>
+                                <select id="prioridade" name="prioridade">
+                                    <option value="alta">Alta</option>
+                                    <option value="media" selected>Média</option>
+                                    <option value="baixa">Baixa</option>
+                                </select>
+                            </div>
                         </div>
-                    `;
-                    resultadosContainer.appendChild(casoElement);
-                });
-            } else {
-                const semResultados = document.createElement('p');
-                semResultados.textContent = 'Nenhum caso encontrado com os filtros selecionados.';
-                resultadosContainer.appendChild(semResultados);
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="autoridade-requisitante">Autoridade Requisitante:</label>
+                        <input type="text" id="autoridade-requisitante" name="autoridade-requisitante" placeholder="Nome e cargo da autoridade que solicitou a perícia">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="data-fato">Data do Fato:</label>
+                                <input type="date" id="data-fato" name="data-fato">
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="hora-fato">Hora do Fato:</label>
+                                <input type="time" id="hora-fato" name="hora-fato">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="local-fato">Local do Fato:</label>
+                        <input type="text" id="local-fato" name="local-fato" placeholder="Endereço ou local onde ocorreu o fato">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="perito-responsavel">Perito Responsável:</label>
+                                <input type="text" id="perito-responsavel" name="perito-responsavel">
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="cro-perito">CRO do Perito:</label>
+                                <input type="text" id="cro-perito" name="cro-perito">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="historico-caso">Histórico do Caso:</label>
+                        <textarea id="historico-caso" name="historico-caso" rows="4" placeholder="Descreva sucintamente o histórico do caso e as circunstâncias relevantes"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="etiquetas-caso">Etiquetas/Tags para classificação:</label>
+                        <input type="text" id="etiquetas-caso" name="etiquetas-caso" placeholder="Digite etiquetas separadas por vírgula (ex: desastre em massa, carbonizado, ossada)">
+                    </div>
+                    
+                    <div class="tags-container">
+                        <div class="tag">Desconhecido <span class="tag-remove">×</span></div>
+                        <div class="tag">Carbonizado <span class="tag-remove">×</span></div>
+                        <div class="tag">Prioridade Alta <span class="tag-remove">×</span></div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="data-exame">Data do Exame:</label>
+                                <input type="date" id="data-exame" name="data-exame">
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="prazo-laudo">Prazo para Entrega do Laudo:</label>
+                                <input type="date" id="prazo-laudo" name="prazo-laudo">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert">
+                        <strong>Alerta:</strong> Existem 3 dias restantes para a entrega do laudo.
+                    </div>
+                </div>
+                
+                <!-- Exame Post-Mortem Tab -->
+                <div class="tab-content" id="exame-post-mortem">
+                    <div class="form-group">
+                        <label for="condicao-corpo">Condição do Corpo:</label>
+                        <select id="condicao-corpo" name="condicao-corpo">
+                            <option value="preservado">Preservado</option>
+                            <option value="decomposicao-inicial">Decomposição Inicial</option>
+                            <option value="decomposicao-avancada">Decomposição Avançada</option>
+                            <option value="carbonizado">Carbonizado</option>
+                            <option value="ossada">Ossada</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="inspecao-externa">Inspeção Externa (Características Gerais):</label>
+                        <textarea id="inspecao-externa" name="inspecao-externa" rows="3" placeholder="Registre características gerais observadas (tatuagens, cicatrizes, particularidades, etc.)"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="exame-extraoral">Exame Extraoral:</label>
+                        <textarea id="exame-extraoral" name="exame-extraoral" rows="3" placeholder="Descreva o exame da região facial externa (cicatrizes, assimetrias, etc.)"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="exame-intraoral">Exame Intraoral:</label>
+                        <textarea id="exame-intraoral" name="exame-intraoral" rows="4" placeholder="Descreva detalhadamente as características dos arcos dentários, restaurações, próteses, etc."></textarea>
+                    </div>
+                    
+                    <div class="odontogram">
+                        <h4>Odontograma Post-Mortem</h4>
+                        <div class="dental-chart">
+                            <!-- Primeira fileira: dentes superiores direitos -->
+                            <div class="tooth" data-tooth="18"><span class="tooth-label">18</span></div>
+                            <div class="tooth" data-tooth="17"><span class="tooth-label">17</span></div>
+                            <div class="tooth" data-tooth="16"><span class="tooth-label">16</span></div>
+                            <div class="tooth" data-tooth="15"><span class="tooth-label">15</span></div>
+                            <div class="tooth" data-tooth="14"><span class="tooth-label">14</span></div>
+                            <div class="tooth" data-tooth="13"><span class="tooth-label">13</span></div>
+                            <div class="tooth" data-tooth="12"><span class="tooth-label">12</span></div>
+                            <div class="tooth" data-tooth="11"><span class="tooth-label">11</span></div>
+                            
+                            <!-- Segunda fileira: dentes superiores esquerdos -->
+                            <div class="tooth" data-tooth="21"><span class="tooth-label">21</span></div>
+                            <div class="tooth" data-tooth="22"><span class="tooth-label">22</span></div>
+                            <div class="tooth" data-tooth="23"><span class="tooth-label">23</span></div>
+                            <div class="tooth" data-tooth="24"><span class="tooth-label">24</span></div>
+                            <div class="tooth" data-tooth="25"><span class="tooth-label">25</span></div>
+                            <div class="tooth" data-tooth="26"><span class="tooth-label">26</span></div>
+                            <div class="tooth" data-tooth="27"><span class="tooth-label">27</span></div>
+                            <div class="tooth" data-tooth="28"><span class="tooth-label">28</span></div>
+                            
+                            <!-- Quebra de linha para separar arcadas -->
+                            <div style="flex-basis: 100%; height: 15px;"></div>
+                            
+                            <!-- Terceira fileira: dentes inferiores direitos -->
+                            <div class="tooth" data-tooth="48"><span class="tooth-label">48</span></div>
+                            <div class="tooth" data-tooth="47"><span class="tooth-label">47</span></div>
+                            <div class="tooth" data-tooth="46"><span class="tooth-label">46</span></div>
+                            <div class="tooth" data-tooth="45"><span class="tooth-label">45</span></div>
+                            <div class="tooth" data-tooth="44"><span class="tooth-label">44</span></div>
+                            <div class="tooth" data-tooth="43"><span class="tooth-label">43</span></div>
+                            <div class="tooth" data-tooth="42"><span class="tooth-label">42</span></div>
+                            <div class="tooth" data-tooth="41"><span class="tooth-label">41</span></div>
+                            
+                            <!-- Quarta fileira: dentes inferiores esquerdos -->
+                            <div class="tooth" data-tooth="31"><span class="tooth-label">31</span></div>
+                            <div class="tooth" data-tooth="32"><span class="tooth-label">32</span></div>
+                            <div class="tooth" data-tooth="33"><span class="tooth-label">33</span></div>
+                            <div class="tooth" data-tooth="34"><span class="tooth-label">34</span></div>
+                            <div class="tooth" data-tooth="35"><span class="tooth-label">35</span></div>
+                            <div class="tooth" data-tooth="36"><span class="tooth-label">36</span></div>
+                            <div class="tooth" data-tooth="37"><span class="tooth-label">37</span></div>
+                            <div class="tooth" data-tooth="38"><span class="tooth-label">38</span></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="obs-odontograma">Observações do Odontograma:</label>
+                            <textarea id="obs-odontograma" name="obs-odontograma" rows="3" placeholder="Registre detalhes específicos sobre o odontograma"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="imaging-collection">
+                        <h4>Exames de Imagem Post-Mortem</h4>
+                        <p>Adicione radiografias, fotografias intra e extraorais, tomografias e outros exames de imagem realizados</p>
+                        
+                        <div class="form-group">
+                            <input type="file" id="exames-imagem-pm" name="exames-imagem-pm" multiple>
+                        </div>
+                        
+                        <div class="file-list">
+                            <div class="file-item">
+                                <div class="file-info">
+                                    <span class="file-icon">🖼️</span>
+                                    <span class="file-name">Radiografia_Panoramica_PM.jpg</span>
+                                    <span class="file-size">(2.3 MB)</span>
+                                </div>
+                                <div class="file-actions">
+                                    <button type="button" class="remove-file">Remover</button>
+                                </div>
+                            </div>
+                            <div class="file-item">
+                                <div class="file-info">
+                                    <span class="file-icon">🖼️</span>
+                                    <span class="file-name">Foto_Intraoral_PM_01.jpg</span>
+                                    <span class="file-size">(1.7 MB)</span>
+                                </div>
+                                <div class="file-actions">
+                                    <button type="button" class="remove-file">Remover</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="caracteristicas-individualizantes">Características Individualizantes:</label>
+                        <textarea id="caracteristicas-individualizantes" name="caracteristicas-individualizantes" rows="3" placeholder="Descreva elementos dentários de alta singularidade (tratamentos específicos, anomalias, etc.)"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="outros-achados">Outros Achados Relevantes:</label>
+                        <textarea id="outros-achados" name="outros-achados" rows="3" placeholder="Registre outros achados relevantes para a identificação"></textarea>
+                    </div>
+                    
+                    <div class="action-tools">
+                        <button type="button">Solicitar Exames Complementares</button>
+                        <button type="button">Salvar Dados Post-Mortem</button>
+                    </div>
+                </div>
+                
+                <!-- Dados Ante-Mortem Tab -->
+                <div class="tab-content" id="dados-ante-mortem">
+                    <div class="form-group">
+                        <label for="possivel-identificacao">Possível Identificação:</label>
+                        <input type="text" id="possivel-identificacao" name="possivel-identificacao" placeholder="Nome da possível vítima (se conhecido)">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="data-nascimento">Data de Nascimento:</label>
+                                <input type="date" id="data-nascimento" name="data-nascimento">
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="sexo">Sexo:</label>
+                                <select id="sexo" name="sexo">
+                                    <option value="masculino">Masculino</option>
+                                    <option value="feminino">Feminino</option>
+                                    <option value="desconhecido">Desconhecido</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fonte-informacao">Fonte da Informação Ante-Mortem:</label>
+                        <select id="fonte-informacao" name="fonte-informacao">
+                            <option value="clinica-odontologica">Clínica Odontológica</option>
+                            <option value="hospital">Hospital</option>
+                            <option value="radiologia">Centro de Radiologia</option>
+                            <option value="familiar">Informação de Familiar</option>
+                            <option value="instituicao">Instituição (Militar, Prisional, etc.)</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nome-clinica">Nome da Clínica/Hospital/Fonte:</label>
+                        <input type="text" id="nome-clinica" name="nome-clinica">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="profissional-responsavel">Profissional Responsável (Ante-Mortem):</label>
+                        <input type="text" id="profissional-responsavel" name="profissional-responsavel" placeholder="Nome do cirurgião-dentista ou profissional responsável">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="descricao-registros">Descrição dos Registros Ante-Mortem:</label>
+                        <textarea id="descricao-registros" name="descricao-registros" rows="4" placeholder="Descreva os registros odontológicos ante-mortem obtidos (tratamentos, características, etc.)"></textarea>
+                    </div>
+                    
+                    <div class="odontogram">
+                        <h4>Odontograma Ante-Mortem</h4>
+                        <div class="dental-chart">
+                            <!-- Mesma estrutura do odontograma anterior, com dados ante-mortem -->
+                            <!-- Primeira fileira: dentes superiores direitos -->
+                            <div class="tooth" data-tooth="18"><span class="tooth-label">18</span></div>
+                            <div class="tooth" data-tooth="17"><span class="tooth-label">17</span></div>
+                            <div class="tooth tooth-selected" data-tooth="16"><span class="tooth-label">16</span></div>
+                            <div class="tooth" data-tooth="15"><span class="tooth-label">15</span></div>
+                            <div class="tooth" data-tooth="14"><span class="tooth-label">14</span></div>
+                            <div class="tooth" data-tooth="13"><span class="tooth-label">13</span></div>
+                            <div class="tooth" data-tooth="12"><span class="tooth-label">12</span></div>
+                            <div class="tooth" data-tooth="11"><span class="tooth-label">11</span></div>
+                            
+                            <!-- Segunda fileira: dentes superiores esquerdos -->
+                            <div class="tooth" data-tooth="21"><span class="tooth-label">21</span></div>
+                            <div class="tooth" data-tooth="22"><span class="tooth-label">22</span></div>
+                            <div class="tooth" data-tooth="23"><span class="tooth-label">23</span></div>
+                            <div class="tooth" data-tooth="24"><span class="tooth-label">24</span></div>
+                            <div class="tooth" data-tooth="25"><span class="tooth-label">25</span></div>
+                            <div class="tooth tooth-selected" data-tooth="26"><span class="tooth-label">26</span></div>
+                            <div class="tooth" data-tooth="27"><span class="tooth-label">27</span></div>
+                            <div class="tooth" data-tooth="28"><span class="tooth-label">28</span></div>
+                            
+                            <!-- Quebra de linha para separar arcadas -->
+                            <div style="flex-basis: 100%; height: 15px;"></div>
+                            
+                            <!-- Terceira fileira: dentes inferiores direitos -->
+                            <div class="tooth" data-tooth="48"><span class="tooth-label">48</span></div>
+                            <div class="tooth tooth-selected" data-tooth="47"><span class="tooth-label">47</span></div>
+                            <div class="tooth" data-tooth="46"><span class="tooth-label">46</span></div>
+                            <div class="tooth" data-tooth="45"><span class="tooth-label">45</span></div>
+                            <div class="tooth" data-tooth="44"><span class="tooth-label">44</span></div>
+                            <div class="tooth" data-tooth="43"><span class="tooth-label">43</span></div>
+                            <div class="tooth" data-tooth="42"><span class="tooth-label">42</span></div>
+                            <div class="tooth" data-tooth="41"><span class="tooth-label">41</span></div>
+                            
+                            <!-- Quarta fileira: dentes inferiores esquerdos -->
+                            <div class="tooth" data-tooth="31"><span class="tooth-label">31</span></div>
+                            <div class="tooth" data-tooth="32"><span class="tooth-label">32</span></div>
+                            <div class="tooth" data-tooth="33"><span class="tooth-label">33</span></div>
+                            <div class="tooth" data-tooth="34"><span class="tooth-label">34</span></div>
+                            <div class="tooth" data-tooth="35"><span class="tooth-label">35</span></div>
+                            <div class="tooth" data-tooth="35"><span class="tooth-label">35</span></div>
+                                                        <div class="tooth" data-tooth="36"><span class="tooth-label">36</span></div>
+                                                        <div class="tooth tooth-selected" data-tooth="37"><span class="tooth-label">37</span></div>
+                                                        <div class="tooth" data-tooth="38"><span class="tooth-label">38</span></div>
+                                                    </div>
+                                                    
+                                                    <div class="form-group">
+                                                        <label for="obs-odontograma-am">Observações do Odontograma (Ante-Mortem):</label>
+                                                        <textarea id="obs-odontograma-am" name="obs-odontograma-am" rows="3" placeholder="Registre detalhes específicos sobre o odontograma ante-mortem"></textarea>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="imaging-collection">
+                                                    <h4>Exames de Imagem Ante-Mortem</h4>
+                                                    <p>Adicione radiografias, fotografias e outros exames de imagem disponíveis</p>
+                                                    
+                                                    <div class="form-group">
+                                                        <input type="file" id="exames-imagem-am" name="exames-imagem-am" multiple>
+                                                    </div>
+                                                    
+                                                    <div class="file-list">
+                                                        <div class="file-item">
+                                                            <div class="file-info">
+                                                                <span class="file-icon">🖼️</span>
+                                                                <span class="file-name">Radiografia_Panoramica_AM_2023.jpg</span>
+                                                                <span class="file-size">(3.1 MB)</span>
+                                                            </div>
+                                                            <div class="file-actions">
+                                                                <button type="button" class="remove-file">Remover</button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="file-item">
+                                                            <div class="file-info">
+                                                                <span class="file-icon">🖼️</span>
+                                                                <span class="file-name">Periapical_16_AM.jpg</span>
+                                                                <span class="file-size">(0.8 MB)</span>
+                                                            </div>
+                                                            <div class="file-actions">
+                                                                <button type="button" class="remove-file">Remover</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label for="historico-tratamento">Histórico de Tratamento Odontológico:</label>
+                                                    <textarea id="historico-tratamento" name="historico-tratamento" rows="4" placeholder="Descreva o histórico de tratamentos odontológicos realizados"></textarea>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label for="prontuario-anexo">Prontuário/Documentação Anexa:</label>
+                                                    <input type="file" id="prontuario-anexo" name="prontuario-anexo" multiple>
+                                                </div>
+                                                
+                                                <div class="action-tools">
+                                                    <button type="button">Solicitar Mais Informações</button>
+                                                    <button type="button">Salvar Dados Ante-Mortem</button>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Comparação Tab -->
+                                            <div class="tab-content" id="comparacao">
+                                                <h3>Comparação Odontológica</h3>
+                                                
+                                                <div class="form-group">
+                                                    <label for="metodo-comparacao">Método de Comparação:</label>
+                                                    <select id="metodo-comparacao" name="metodo-comparacao">
+                                                        <option value="visual">Comparação Visual Direta</option>
+                                                        <option value="sobreposicao">Técnica de Sobreposição de Imagens</option>
+                                                        <option value="metrico">Análise Métrica</option>
+                                                        <option value="morfologico">Análise Morfológica</option>
+                                                        <option value="protese">Identificação por Prótese</option>
+                                                        <option value="outro">Outro</option>
+                                                    </select>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label for="elementos-comparados">Elementos Dentários Comparados:</label>
+                                                    <textarea id="elementos-comparados" name="elementos-comparados" rows="4" placeholder="Liste os elementos dentários comparados e as concordâncias/discordâncias"></textarea>
+                                                </div>
+                                                
+                                                <div class="odontogram">
+                                                    <h4>Odontograma Comparativo</h4>
+                                                    <div class="dental-chart">
+                                                        <!-- Representação visual das concordâncias e discordâncias -->
+                                                        <!-- Mesma estrutura do odontograma anterior, mas com marcações de comparação -->
+                                                        <!-- Primeira fileira: dentes superiores direitos -->
+                                                        <div class="tooth" data-tooth="18"><span class="tooth-label">18</span></div>
+                                                        <div class="tooth" data-tooth="17"><span class="tooth-label">17</span></div>
+                                                        <div class="tooth tooth-selected" data-tooth="16"><span class="tooth-label">16</span></div>
+                                                        <div class="tooth" data-tooth="15"><span class="tooth-label">15</span></div>
+                                                        <div class="tooth" data-tooth="14"><span class="tooth-label">14</span></div>
+                                                        <div class="tooth" data-tooth="13"><span class="tooth-label">13</span></div>
+                                                        <div class="tooth" data-tooth="12"><span class="tooth-label">12</span></div>
+                                                        <div class="tooth" data-tooth="11"><span class="tooth-label">11</span></div>
+                                                        
+                                                        <!-- Segunda fileira: dentes superiores esquerdos -->
+                                                        <div class="tooth" data-tooth="21"><span class="tooth-label">21</span></div>
+                                                        <div class="tooth" data-tooth="22"><span class="tooth-label">22</span></div>
+                                                        <div class="tooth" data-tooth="23"><span class="tooth-label">23</span></div>
+                                                        <div class="tooth" data-tooth="24"><span class="tooth-label">24</span></div>
+                                                        <div class="tooth" data-tooth="25"><span class="tooth-label">25</span></div>
+                                                        <div class="tooth tooth-selected" data-tooth="26"><span class="tooth-label">26</span></div>
+                                                        <div class="tooth" data-tooth="27"><span class="tooth-label">27</span></div>
+                                                        <div class="tooth" data-tooth="28"><span class="tooth-label">28</span></div>
+                                                        
+                                                        <!-- Quebra de linha para separar arcadas -->
+                                                        <div style="flex-basis: 100%; height: 15px;"></div>
+                                                        
+                                                        <!-- Terceira fileira: dentes inferiores direitos -->
+                                                        <div class="tooth" data-tooth="48"><span class="tooth-label">48</span></div>
+                                                        <div class="tooth tooth-selected" data-tooth="47"><span class="tooth-label">47</span></div>
+                                                        <div class="tooth" data-tooth="46"><span class="tooth-label">46</span></div>
+                                                        <div class="tooth" data-tooth="45"><span class="tooth-label">45</span></div>
+                                                        <div class="tooth" data-tooth="44"><span class="tooth-label">44</span></div>
+                                                        <div class="tooth" data-tooth="43"><span class="tooth-label">43</span></div>
+                                                        <div class="tooth" data-tooth="42"><span class="tooth-label">42</span></div>
+                                                        <div class="tooth" data-tooth="41"><span class="tooth-label">41</span></div>
+                                                        
+                                                        <!-- Quarta fileira: dentes inferiores esquerdos -->
+                                                        <div class="tooth" data-tooth="31"><span class="tooth-label">31</span></div>
+                                                        <div class="tooth" data-tooth="32"><span class="tooth-label">32</span></div>
+                                                        <div class="tooth" data-tooth="33"><span class="tooth-label">33</span></div>
+                                                        <div class="tooth" data-tooth="34"><span class="tooth-label">34</span></div>
+                                                        <div class="tooth" data-tooth="35"><span class="tooth-label">35</span></div>
+                                                        <div class="tooth" data-tooth="36"><span class="tooth-label">36</span></div>
+                                                        <div class="tooth tooth-selected" data-tooth="37"><span class="tooth-label">37</span></div>
+                                                        <div class="tooth" data-tooth="38"><span class="tooth-label">38</span></div>
+                                                    </div>
+                                                    
+                                                    <div class="form-group">
+                                                        <label for="legenda-comparacao">Legenda de Comparação:</label>
+                                                        <div style="display: flex; gap: 15px; margin: 10px 0;">
+                                                            <div><span style="background-color: #b8daff; padding: 3px 10px; border-radius: 3px;">■</span> Concordância</div>
+                                                            <div><span style="background-color: #f8d7da; padding: 3px 10px; border-radius: 3px;">■</span> Discordância</div>
+                                                            <div><span style="background-color: #ffeeba; padding: 3px 10px; border-radius: 3px;">■</span> Não conclusivo</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label for="concordancias">Concordâncias Encontradas:</label>
+                                                    <textarea id="concordancias" name="concordancias" rows="3" placeholder="Descreva as concordâncias encontradas entre os dados ante-mortem e post-mortem"></textarea>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label for="discordancias">Discordâncias Encontradas:</label>
+                                                    <textarea id="discordancias" name="discordancias" rows="3" placeholder="Descreva as discordâncias encontradas entre os dados ante-mortem e post-mortem"></textarea>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label for="explicativas">Discordâncias Explicativas:</label>
+                                                    <textarea id="explicativas" name="explicativas" rows="3" placeholder="Descreva as discordâncias que podem ser explicadas (tempo entre registros, etc.)"></textarea>
+                                                </div>
+                                                
+                                                <div class="imaging-collection">
+                                                    <h4>Imagens Comparativas</h4>
+                                                    <p>Adicione imagens que demonstrem a comparação realizada</p>
+                                                    
+                                                    <div class="form-group">
+                                                        <input type="file" id="imagens-comparativas" name="imagens-comparativas" multiple>
+                                                    </div>
+                                                    
+                                                    <div class="file-list">
+                                                        <div class="file-item">
+                                                            <div class="file-info">
+                                                                <span class="file-icon">🖼️</span>
+                                                                <span class="file-name">Comparacao_Radiografica_16.jpg</span>
+                                                                <span class="file-size">(1.9 MB)</span>
+                                                            </div>
+                                                            <div class="file-actions">
+                                                                <button type="button" class="remove-file">Remover</button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="file-item">
+                                                            <div class="file-info">
+                                                                <span class="file-icon">🖼️</span>
+                                                                <span class="file-name">Sobreposicao_Rx_37.jpg</span>
+                                                                <span class="file-size">(2.2 MB)</span>
+                                                            </div>
+                                                            <div class="file-actions">
+                                                                <button type="button" class="remove-file">Remover</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label for="analise-preliminar">Análise Preliminar:</label>
+                                                    <textarea id="analise-preliminar" name="analise-preliminar" rows="4" placeholder="Apresente uma análise preliminar dos achados comparativos"></textarea>
+                                                </div>
+                                                
+                                                <div class="action-tools">
+                                                    <button type="button">Salvar Comparação</button>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Laudo Final Tab -->
+                                            <div class="tab-content" id="laudo-final">
+                                                <h3>Laudo Final</h3>
+                                                
+                                                <div class="form-group">
+                                                    <label for="conclusao-identificacao">Conclusão da Identificação:</label>
+                                                    <select id="conclusao-identificacao" name="conclusao-identificacao">
+                                                        <option value="positiva">Identificação Positiva</option>
+                                                        <option value="provavel">Identificação Provável</option>
+                                                        <option value="possivel">Identificação Possível</option>
+                                                        <option value="exclusao">Exclusão</option>
+                                                        <option value="inconclusiva">Inconclusiva</option>
+                                                    </select>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label for="fundamentacao-cientifica">Fundamentação Científica:</label>
+                                                    <textarea id="fundamentacao-cientifica" name="fundamentacao-cientifica" rows="6" placeholder="Apresente a fundamentação científica para a conclusão alcançada"></textarea>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label for="metodos-utilizados">Métodos e Técnicas Utilizados:</label>
+                                                    <textarea id="metodos-utilizados" name="metodos-utilizados" rows="4" placeholder="Descreva os métodos e técnicas utilizados na identificação"></textarea>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label for="qualidade-evidencia">Qualidade da Evidência:</label>
+                                                    <select id="qualidade-evidencia" name="qualidade-evidencia">
+                                                        <option value="excelente">Excelente</option>
+                                                        <option value="boa">Boa</option>
+                                                        <option value="regular">Regular</option>
+                                                        <option value="baixa">Baixa</option>
+                                                        <option value="insuficiente">Insuficiente</option>
+                                                    </select>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label for="consideracoes-finais">Considerações Finais:</label>
+                                                    <textarea id="consideracoes-finais" name="consideracoes-finais" rows="4" placeholder="Apresente considerações finais relevantes para o caso"></textarea>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label for="recomendacoes">Recomendações:</label>
+                                                    <textarea id="recomendacoes" name="recomendacoes" rows="3" placeholder="Registre recomendações adicionais, se houver"></textarea>
+                                                </div>
+                                                
+                                                <div class="form-row">
+                                                    <div class="form-col">
+                                                        <div class="form-group">
+                                                            <label for="data-conclusao">Data da Conclusão:</label>
+                                                            <input type="date" id="data-conclusao" name="data-conclusao">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-col">
+                                                        <div class="form-group">
+                                                            <label for="local-laudo">Local:</label>
+                                                            <input type="text" id="local-laudo" name="local-laudo" placeholder="Local de emissão do laudo">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label for="assinatura-digital">Assinatura Digital:</label>
+                                                    <div style="border: 1px dashed #ccc; padding: 15px; text-align: center; margin-top: 5px;">
+                                                        <p>Área para assinatura digital do perito</p>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="action-tools">
+                                                    <button type="button">Salvar como Rascunho</button>
+                                                    <button type="button">Visualizar Laudo</button>
+                                                    <button type="button">Finalizar e Assinar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <script>
+                                    // JavaScript para alternar entre as abas
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        const tabs = document.querySelectorAll('.tab');
+                                        
+                                        tabs.forEach(tab => {
+                                            tab.addEventListener('click', function() {
+                                                // Remove a classe 'active' de todas as abas e conteúdos
+                                                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                                                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                                                
+                                                // Adiciona a classe 'active' à aba clicada
+                                                this.classList.add('active');
+                                                
+                                                // Mostra o conteúdo correspondente
+                                                const tabId = this.getAttribute('data-tab');
+                                                document.getElementById(tabId).classList.add('active');
+                                            });
+                                        });
+                                        
+                                        // Funcionalidade de seleção de dentes no odontograma
+                                        const teeth = document.querySelectorAll('.tooth');
+                                        teeth.forEach(tooth => {
+                                            tooth.addEventListener('click', function() {
+                                                this.classList.toggle('tooth-selected');
+                                            });
+                                        });
+                                        
+                                        // Funcionalidade de remoção de arquivos
+                                        const removeButtons = document.querySelectorAll('.remove-file');
+                                        removeButtons.forEach(button => {
+                                            button.addEventListener('click', function() {
+                                                const fileItem = this.closest('.file-item');
+                                                fileItem.remove();
+                                            });
+                                        });
+                                        
+                                        // Funcionalidade para adicionar tags
+                                        const tagInput = document.getElementById('etiquetas-caso');
+                                        if (tagInput) {
+                                            tagInput.addEventListener('keydown', function(e) {
+                                                if (e.key === 'Enter' || e.key === ',') {
+                                                    e.preventDefault();
+                                                    const tagText = this.value.trim();
+                                                    if (tagText) {
+                                                        const tagsContainer = document.querySelector('.tags-container');
+                                                        const newTag = document.createElement('div');
+                                                        newTag.className = 'tag';
+                                                        newTag.innerHTML = `${tagText} <span class="tag-remove">×</span>`;
+                                                        tagsContainer.appendChild(newTag);
+                                                        
+                                                        // Adiciona o evento de remoção da tag
+                                                        const removeSpan = newTag.querySelector('.tag-remove');
+                                                        removeSpan.addEventListener('click', function() {
+                                                            newTag.remove();
+                                                        });
+                                                        
+                                                        this.value = '';
+                                                    }
+                                                }
+                                            });
+                                        }
+                                        
+                                        // Alerta de prazo
+                                        const prazoLaudo = document.getElementById('prazo-laudo');
+                                        if (prazoLaudo) {
+                                            prazoLaudo.addEventListener('change', function() {
+                                                const prazoData = new Date(this.value);
+                                                const hoje = new Date();
+                                                const diffTime = prazoData - hoje;
+                                                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                                
+                                                const alertElement = document.querySelector('.alert');
+                                                if (diffDays <= 5) {
+                                                    alertElement.style.display = 'block';
+                                                    alertElement.innerHTML = `<strong>Alerta:</strong> Existem ${diffDays} dias restantes para a entrega do laudo.`;
+                                                } else {
+                                                    alertElement.style.display = 'none';
+                                                }
+                                                // Encontra os botões na seção de Laudo Final
+document.addEventListener('DOMContentLoaded', function() {
+    // Botões na seção Laudo Final
+    const btnSalvarRascunho = document.querySelector('#laudo-final .action-tools button:nth-child(1)');
+    const btnVisualizarLaudo = document.querySelector('#laudo-final .action-tools button:nth-child(2)');
+    const btnFinalizarAssinar = document.querySelector('#laudo-final .action-tools button:nth-child(3)');
+    
+    // Array para armazenar os laudos salvos
+    let laudosSalvos = JSON.parse(localStorage.getItem('laudosSalvos')) || [];
+    
+    // Função para salvar o laudo como rascunho
+    if (btnSalvarRascunho) {
+        btnSalvarRascunho.addEventListener('click', function() {
+            // Coleta os dados do formulário de laudo
+            const conclusao = document.getElementById('conclusao-identificacao').value;
+            const fundamentacao = document.getElementById('fundamentacao-cientifica').value;
+            const metodos = document.getElementById('metodos-utilizados').value;
+            const qualidadeEvidencia = document.getElementById('qualidade-evidencia').value;
+            const consideracoes = document.getElementById('consideracoes-finais').value;
+            const recomendacoes = document.getElementById('recomendacoes').value;
+            const dataConclusao = document.getElementById('data-conclusao').value;
+            const localLaudo = document.getElementById('local-laudo').value;
+            
+            // Verifica se os campos obrigatórios estão preenchidos
+            if (!conclusao || !fundamentacao || !metodos) {
+                alert('Por favor, preencha ao menos os campos de conclusão, fundamentação e métodos utilizados.');
+                return;
             }
-        }
-
-        function limparFiltros() {
-            document.getElementById('numero-caso').value = '';
-            document.getElementById('tipo-caso').selectedIndex = 0;
-            document.getElementById('data-inicial').value = '';
-            document.getElementById('data-final').value = '';
-            document.getElementById('status-caso').selectedIndex = 0;
             
-            // Limpar resultados
-            const resultadosContainer = document.getElementById('resultados-busca');
-            resultadosContainer.innerHTML = `
-                <h3 class="section-title">Resultados da Busca</h3>
-                <p id="mensagem-resultados">Nenhum resultado encontrado. Utilize os filtros acima para buscar casos.</p>
-            `;
-        }
-
-        function visualizarCaso(id) {
-            const caso = casosMock.find(c => c.id === id);
+            // Cria objeto do laudo
+            const novoLaudo = {
+                id: 'FO-2025-' + Math.floor(10000 + Math.random() * 90000),
+                dataSalvo: new Date().toISOString(),
+                status: 'Rascunho',
+                conclusao,
+                fundamentacao,
+                metodos,
+                qualidadeEvidencia,
+                consideracoes,
+                recomendacoes,
+                dataConclusao,
+                localLaudo
+            };
             
-            // Criar overlay de visualização
-            const overlay = document.createElement('div');
-            overlay.className = 'overlay';
+            // Adiciona à lista de laudos
+            laudosSalvos.push(novoLaudo);
+            localStorage.setItem('laudosSalvos', JSON.stringify(laudosSalvos));
             
+            // Feedback ao usuário
+            alert(`Laudo salvo como rascunho! ID: ${novoLaudo.id}`);
+            
+            // Adiciona o ID na página se for um novo laudo
+            const casoElement = document.querySelector('.status-tag:first-child');
+            if (casoElement && casoElement.textContent === 'Caso #FO-2025-01298') {
+                casoElement.textContent = `Caso #${novoLaudo.id}`;
+            }
+        });
+    }
+    
+    // Função para visualizar o laudo
+    if (btnVisualizarLaudo) {
+        btnVisualizarLaudo.addEventListener('click', function() {
+            // Cria modal para visualização
             const modal = document.createElement('div');
-            modal.className = 'modal';
-            modal.innerHTML = `
-                <h2>Detalhes do Caso ${caso.id}</h2>
-                <p><strong>Tipo:</strong> ${traduzirTipo(caso.tipo)}</p>
-                <p><strong>Descrição:</strong> ${caso.descricao}</p>
-                <p><strong>Data:</strong> ${formatarData(caso.data)}</p>
-                <p><strong>Status:</strong> ${traduzirStatus(caso.status)}</p>
-                <p><strong>Responsável:</strong> ${caso.responsavel}</p>
-                <button onclick="this.closest('.overlay').remove()">Fechar</button>
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+            modal.style.display = 'flex';
+            modal.style.justifyContent = 'center';
+            modal.style.alignItems = 'center';
+            modal.style.zIndex = '1000';
+            
+            // Lista de laudos ou preview do laudo atual
+            const laudoContainer = document.createElement('div');
+            laudoContainer.style.backgroundColor = 'white';
+            laudoContainer.style.padding = '20px';
+            laudoContainer.style.borderRadius = '10px';
+            laudoContainer.style.width = '80%';
+            laudoContainer.style.maxWidth = '800px';
+            laudoContainer.style.maxHeight = '90%';
+            laudoContainer.style.overflowY = 'auto';
+            
+            // Se existirem laudos salvos, mostra a lista
+            if (laudosSalvos.length > 0) {
+                laudoContainer.innerHTML = `
+                    <h3>Laudos Salvos</h3>
+                    <table style="width:100%; border-collapse: collapse; margin-top: 15px;">
+                        <thead>
+                            <tr>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">ID</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Data</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Status</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${laudosSalvos.map(laudo => `
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">${laudo.id}</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">${new Date(laudo.dataSalvo).toLocaleDateString()}</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">${laudo.status}</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">
+                                        <button class="visualizar-btn" data-id="${laudo.id}" style="background-color: #007BFF; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; margin-right: 5px;">Visualizar</button>
+                                        <button class="excluir-btn" data-id="${laudo.id}" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Excluir</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    <div style="margin-top: 20px; text-align: right;">
+                        <button id="novo-laudo-btn" style="background-color: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Novo Laudo</button>
+                        <button id="fechar-lista-btn" style="background-color: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-left: 10px;">Fechar</button>
+                    </div>
+                `;
+            } else {
+                // Se não houver laudos salvos, mostra preview do laudo atual
+                const conclusao = document.getElementById('conclusao-identificacao').value || 'Não preenchido';
+                const fundamentacao = document.getElementById('fundamentacao-cientifica').value || 'Não preenchido';
+                const metodos = document.getElementById('metodos-utilizados').value || 'Não preenchido';
+                
+                laudoContainer.innerHTML = `
+                    <h3>Prévia do Laudo</h3>
+                    <div style="margin-top: 20px; border: 1px solid #ddd; padding: 15px; border-radius: 5px;">
+                        <h4 style="margin-top:0;">Instituto Médico Legal</h4>
+                        <h2 style="text-align: center;">LAUDO DE EXAME ODONTOLEGAL</h2>
+                        <p><strong>Caso:</strong> #FO-2025-01298</p>
+                        <p><strong>Data:</strong> ${new Date().toLocaleDateString()}</p>
+                        
+                        <h4>1. HISTÓRICO</h4>
+                        <p>${document.getElementById('historico-caso')?.value || 'Histórico não informado'}</p>
+                        
+                        <h4>2. EXAME ODONTOLEGAL</h4>
+                        <p>${document.getElementById('exame-intraoral')?.value || 'Exame não registrado'}</p>
+                        
+                        <h4>3. CONCLUSÃO</h4>
+                        <p><strong>Resultado da identificação:</strong> ${conclusao}</p>
+                        
+                        <h4>4. FUNDAMENTAÇÃO CIENTÍFICA</h4>
+                        <p>${fundamentacao}</p>
+                        
+                        <h4>5. MÉTODOS UTILIZADOS</h4>
+                        <p>${metodos}</p>
+                        
+                        <div style="margin-top: 40px; text-align: center;">
+                            <p>________________________________</p>
+                            <p>${document.getElementById('perito-responsavel')?.value || 'Perito Odontolegal'}</p>
+                            <p>CRO: ${document.getElementById('cro-perito')?.value || 'N/A'}</p>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px; text-align: right;">
+                        <button id="imprimir-btn" style="background-color: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Imprimir</button>
+                        <button id="fechar-preview-btn" style="background-color: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-left: 10px;">Fechar</button>
+                    </div>
+                `;
+            }
+            
+            modal.appendChild(laudoContainer);
+            document.body.appendChild(modal);
+            
+            // Eventos para os botões da lista de laudos
+            const visualizarBtns = modal.querySelectorAll('.visualizar-btn');
+            visualizarBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const laudoId = this.getAttribute('data-id');
+                    const laudoSelecionado = laudosSalvos.find(l => l.id === laudoId);
+                    
+                    if (laudoSelecionado) {
+                        // Mostra os detalhes do laudo selecionado
+                        laudoContainer.innerHTML = `
+                            <h3>Laudo ${laudoSelecionado.id}</h3>
+                            <div style="margin-top: 20px; border: 1px solid #ddd; padding: 15px; border-radius: 5px;">
+                                <h4 style="margin-top:0;">Instituto Médico Legal</h4>
+                                <h2 style="text-align: center;">LAUDO DE EXAME ODONTOLEGAL</h2>
+                                <p><strong>Caso:</strong> #${laudoSelecionado.id}</p>
+                                <p><strong>Data:</strong> ${new Date(laudoSelecionado.dataSalvo).toLocaleDateString()}</p>
+                                <p><strong>Status:</strong> ${laudoSelecionado.status}</p>
+                                
+                                <h4>1. CONCLUSÃO</h4>
+                                <p><strong>Resultado da identificação:</strong> ${laudoSelecionado.conclusao}</p>
+                                
+                                <h4>2. FUNDAMENTAÇÃO CIENTÍFICA</h4>
+                                <p>${laudoSelecionado.fundamentacao}</p>
+                                
+                                <h4>3. MÉTODOS UTILIZADOS</h4>
+                                <p>${laudoSelecionado.metodos}</p>
+                                
+                                <h4>4. CONSIDERAÇÕES FINAIS</h4>
+                                <p>${laudoSelecionado.consideracoes || 'Não informado'}</p>
+                                
+                                <h4>5. RECOMENDAÇÕES</h4>
+                                <p>${laudoSelecionado.recomendacoes || 'Não informado'}</p>
+                                
+                                <div style="margin-top: 40px; text-align: center;">
+                                    <p>________________________________</p>
+                                    <p>${document.getElementById('perito-responsavel')?.value || 'Perito Odontolegal'}</p>
+                                    <p>CRO: ${document.getElementById('cro-perito')?.value || 'N/A'}</p>
+                                </div>
+                            </div>
+                            <div style="margin-top: 20px; text-align: right;">
+                                <button id="imprimir-btn" style="background-color: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Imprimir</button>
+                                <button id="voltar-lista-btn" style="background-color: #007BFF; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-left: 10px;">Voltar</button>
+                                <button id="fechar-detalhe-btn" style="background-color: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-left: 10px;">Fechar</button>
+                            </div>
+                        `;
+                        
+                        // Evento para voltar à lista
+                        modal.querySelector('#voltar-lista-btn').addEventListener('click', function() {
+                            btnVisualizarLaudo.click();
+                        });
+                        
+                        // Evento para imprimir
+                        modal.querySelector('#imprimir-btn').addEventListener('click', function() {
+                            window.print();
+                        });
+                        
+                        // Evento para fechar
+                        modal.querySelector('#fechar-detalhe-btn').addEventListener('click', function() {
+                            document.body.removeChild(modal);
+                        });
+                    }
+                });
+            });
+            
+            // Eventos para excluir laudos
+            const excluirBtns = modal.querySelectorAll('.excluir-btn');
+            excluirBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (confirm('Tem certeza que deseja excluir este laudo?')) {
+                        const laudoId = this.getAttribute('data-id');
+                        laudosSalvos = laudosSalvos.filter(l => l.id !== laudoId);
+                        localStorage.setItem('laudosSalvos', JSON.stringify(laudosSalvos));
+                        btnVisualizarLaudo.click();
+                    }
+                });
+            });
+            
+            // Evento para novo laudo
+            const novoBtnLaudo = modal.querySelector('#novo-laudo-btn');
+            if (novoBtnLaudo) {
+                novoBtnLaudo.addEventListener('click', function() {
+                    document.body.removeChild(modal);
+                });
+            }
+            
+            // Evento para fechar lista
+            const fecharListaBtn = modal.querySelector('#fechar-lista-btn');
+            if (fecharListaBtn) {
+                fecharListaBtn.addEventListener('click', function() {
+                    document.body.removeChild(modal);
+                });
+            }
+            
+            // Evento para fechar preview
+            const fecharPreviewBtn = modal.querySelector('#fechar-preview-btn');
+            if (fecharPreviewBtn) {
+                fecharPreviewBtn.addEventListener('click', function() {
+                    document.body.removeChild(modal);
+                });
+            }
+            
+            // Evento para imprimir
+            const imprimirBtn = modal.querySelector('#imprimir-btn');
+            if (imprimirBtn) {
+                imprimirBtn.addEventListener('click', function() {
+                    window.print();
+                });
+            }
+            
+            // Fecha modal ao clicar fora
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            });
+        });
+    }
+    
+    // Função para finalizar e assinar o laudo
+    if (btnFinalizarAssinar) {
+        btnFinalizarAssinar.addEventListener('click', function() {
+            // Verifica se campos obrigatórios estão preenchidos
+            const camposObrigatorios = [
+                'conclusao-identificacao',
+                'fundamentacao-cientifica',
+                'metodos-utilizados',
+                'qualidade-evidencia',
+                'data-conclusao',
+                'local-laudo'
+            ];
+            
+            let camposFaltantes = [];
+            
+            camposObrigatorios.forEach(campo => {
+                const elemento = document.getElementById(campo);
+                if (!elemento || !elemento.value) {
+                    camposFaltantes.push(campo);
+                }
+            });
+            
+            if (camposFaltantes.length > 0) {
+                alert('Por favor, preencha todos os campos obrigatórios antes de finalizar o laudo.');
+                return;
+            }
+            
+            // Modal para assinatura digital
+            const modalAssinatura = document.createElement('div');
+            modalAssinatura.style.position = 'fixed';
+            modalAssinatura.style.top = '0';
+            modalAssinatura.style.left = '0';
+            modalAssinatura.style.width = '100%';
+            modalAssinatura.style.height = '100%';
+            modalAssinatura.style.backgroundColor = 'rgba(0,0,0,0.5)';
+            modalAssinatura.style.display = 'flex';
+            modalAssinatura.style.justifyContent = 'center';
+            modalAssinatura.style.alignItems = 'center';
+            modalAssinatura.style.zIndex = '1000';
+            
+            const assinaturaContainer = document.createElement('div');
+            assinaturaContainer.style.backgroundColor = 'white';
+            assinaturaContainer.style.padding = '20px';
+            assinaturaContainer.style.borderRadius = '10px';
+            assinaturaContainer.style.width = '400px';
+            
+            assinaturaContainer.innerHTML = `
+                <h3>Assinatura Digital</h3>
+                <p>Por favor, confirme sua identidade para assinar o laudo.</p>
+                
+                <div style="margin-top: 15px;">
+                    <label for="certificado-digital" style="display: block; margin-bottom: 5px; font-weight: bold;">Certificado Digital:</label>
+                    <select id="certificado-digital" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                        <option value="">Selecione seu certificado</option>
+                        <option value="cert1">Certificado ICP-Brasil A3</option>
+                        <option value="cert2">Certificado CFO/CRO</option>
+                        <option value="cert3">Certificado Institucional</option>
+                    </select>
+                </div>
+                
+                <div style="margin-top: 15px;">
+                    <label for="senha-certificado" style="display: block; margin-bottom: 5px; font-weight: bold;">Senha:</label>
+                    <input type="password" id="senha-certificado" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <div id="area-assinatura" style="width: 100%; height: 100px; border: 1px dashed #ccc; display: flex; justify-content: center; align-items: center;">
+                        <p>Área para assinatura eletrônica</p>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; text-align: right;">
+                    <button id="assinar-btn" style="background-color: #007BFF; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Assinar Documento</button>
+                    <button id="cancelar-assinatura-btn" style="background-color: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-left: 10px;">Cancelar</button>
+                </div>
             `;
             
-            overlay.appendChild(modal);
-            document.body.appendChild(overlay);
-        }
-
-        function selecionarCaso(id) {
-            const caso = casosMock.find(c => c.id === id);
+            modalAssinatura.appendChild(assinaturaContainer);
+            document.body.appendChild(modalAssinatura);
             
-            // Salvar caso selecionado no localStorage para uso na próxima tela
-            localStorage.setItem('casoSelecionado', JSON.stringify(caso));
+            // Evento para o botão assinar
+            document.getElementById('assinar-btn').addEventListener('click', function() {
+                const certificado = document.getElementById('certificado-digital').value;
+                const senha = document.getElementById('senha-certificado').value;
+                
+                if (!certificado || !senha) {
+                    alert('Por favor, selecione um certificado e informe a senha.');
+                    return;
+                }
+                
+                // Coleta os dados do laudo para finalizar
+                const conclusao = document.getElementById('conclusao-identificacao').value;
+                const fundamentacao = document.getElementById('fundamentacao-cientifica').value;
+                const metodos = document.getElementById('metodos-utilizados').value;
+                const qualidadeEvidencia = document.getElementById('qualidade-evidencia').value;
+                const consideracoes = document.getElementById('consideracoes-finais').value;
+                const recomendacoes = document.getElementById('recomendacoes').value;
+                const dataConclusao = document.getElementById('data-conclusao').value;
+                const localLaudo = document.getElementById('local-laudo').value;
+                
+                // Cria objeto do laudo finalizado
+                const laudoFinalizado = {
+                    id: 'FO-2025-' + Math.floor(10000 + Math.random() * 90000),
+                    dataSalvo: new Date().toISOString(),
+                    dataFinalizado: new Date().toISOString(),
+                    status: 'Finalizado',
+                    assinado: true,
+                    certificado: certificado,
+                    conclusao,
+                    fundamentacao,
+                    metodos,
+                    qualidadeEvidencia,
+                    consideracoes,
+                    recomendacoes,
+                    dataConclusao,
+                    localLaudo
+                };
+                
+                // Adiciona à lista de laudos
+                laudosSalvos.push(laudoFinalizado);
+                localStorage.setItem('laudosSalvos', JSON.stringify(laudosSalvos));
+                
+                // Mostra confirmação e fecha modal
+                document.body.removeChild(modalAssinatura);
+                
+                // Modal de confirmação
+                const modalConfirmacao = document.createElement('div');
+                modalConfirmacao.style.position = 'fixed';
+                modalConfirmacao.style.top = '0';
+                modalConfirmacao.style.left = '0';
+                modalConfirmacao.style.width = '100%';
+                modalConfirmacao.style.height = '100%';
+                modalConfirmacao.style.backgroundColor = 'rgba(0,0,0,0.5)';
+                modalConfirmacao.style.display = 'flex';
+                modalConfirmacao.style.justifyContent = 'center';
+                modalConfirmacao.style.alignItems = 'center';
+                modalConfirmacao.style.zIndex = '1000';
+                
+                const confirmacaoContainer = document.createElement('div');
+                confirmacaoContainer.style.backgroundColor = 'white';
+                confirmacaoContainer.style.padding = '20px';
+                confirmacaoContainer.style.borderRadius = '10px';
+                confirmacaoContainer.style.width = '400px';
+                confirmacaoContainer.style.textAlign = 'center';
+                
+                confirmacaoContainer.innerHTML = `
+                    <h3 style="color: #28a745;">Laudo Finalizado com Sucesso!</h3>
+                    <p>O laudo foi finalizado, assinado digitalmente e registrado no sistema.</p>
+                    <p>Número do Laudo: <strong>${laudoFinalizado.id}</strong></p>
+                    <p>Data: ${new Date().toLocaleDateString()} às ${new Date().toLocaleTimeString()}</p>
+                    
+                    <div style="margin-top: 20px; text-align: center;">
+                        <button id="ok-btn" style="background-color: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">OK</button>
+                    </div>
+                `;
+                
+                modalConfirmacao.appendChild(confirmacaoContainer);
+                document.body.appendChild(modalConfirmacao);
+                
+                // Evento para o botão OK
+                document.getElementById('ok-btn').addEventListener('click', function() {
+                    document.body.removeChild(modalConfirmacao);
+                    
+                    // Atualiza o status do caso na interface
+                    const statusElement = document.querySelector('.status-tag:nth-child(2)');
+                    if (statusElement) {
+                        statusElement.textContent = 'Finalizado';
+                        statusElement.style.backgroundColor = '#28a745';
+                    }
+                    
+                    // Atualiza o ID do caso na interface
+                    const casoElement = document.querySelector('.status-tag:first-child');
+                    if (casoElement) {
+                        casoElement.textContent = `Caso #${laudoFinalizado.id}`;
+                    }
+                    
+                    // Desabilita os campos para edição
+                    const camposLaudo = document.querySelectorAll('#laudo-final input, #laudo-final select, #laudo-final textarea');
+                    camposLaudo.forEach(campo => {
+                        campo.disabled = true;
+                    });
+                    
+                    // Muda o texto dos botões
+                    btnFinalizarAssinar.textContent = "Laudo Finalizado";
+                    btnFinalizarAssinar.disabled = true;
+                    btnSalvarRascunho.textContent = "Gerar Cópia";
+                });
+            });
             
-            // Redirecionar para a tela de evidências
-            window.location.href = 'telaassistente.html';
-        }
-
-        // Funções auxiliares de formatação
-        function formatarData(data) {
-            return new Date(data).toLocaleDateString('pt-BR');
-        }
-
-        function traduzirStatus(status) {
-            const statusMap = {
-                'aberto': 'Aberto',
-                'em-andamento': 'Em Andamento',
-                'concluido': 'Concluído',
-                'arquivado': 'Arquivado'
-            };
-            return statusMap[status] || status;
-        }
-
-        function traduzirTipo(tipo) {
-            const tipoMap = {
-                'criminal': 'Criminal',
-                'civil': 'Civil',
-                'investigativo': 'Investigativo',
-                'outro': 'Outro'
-            };
-            return tipoMap[tipo] || tipo;
-        }
-    </script>
-</body>
-</html>
+            // Evento para o botão cancelar
+            document.getElementById('cancelar-assinatura-btn').addEventListener('click', function() {
+                document.body.removeChild(modalAssinatura);
+            });
+            
+            // Fecha modal ao clicar fora
+            modalAssinatura.addEventListener('click', function(e) {
+                if (e.target === modalAssinatura) {
+                    document.body.removeChild(modalAssinatura);
+                }
+            });
+        });
+    }
+});
+                                            });
+                                        }
+                                    });
+                                </script>
+                            </body>
+                            </html>

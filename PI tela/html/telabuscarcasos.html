@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca de Casos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #007BFF;
+            margin: 0;
+            padding: 20px 0;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+        }
+        h2 {
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .opcoes-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .opcao-busca {
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .form-group {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            background-color: #007BFF;
+            color: white;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .botoes-opcao {
+            display: flex;
+            gap: 15px;
+        }
+        .botao-opcao {
+            flex: 1;
+        }
+        .voltar-btn {
+            margin-top: 20px;
+            background-color: #e60a0a;
+        }
+        .voltar-btn:hover {
+            background-color: #cb1c12;
+        }
+        .buscar-btn {
+            margin-top: 15px;
+            background-color: #28a745;
+        }
+        .buscar-btn:hover {
+            background-color: #218838;
+        }
+        .resultados {
+            margin-top: 20px;
+            display: none;
+            text-align: left;
+        }
+        .resultados h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .resultado-item {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Busca de Casos</h2>
+        
+        <div class="botoes-opcao">
+            <button class="botao-opcao" onclick="mostrarFormulario('ocorrencias')">Buscar Ocorrências</button>
+            <button class="botao-opcao" onclick="mostrarFormulario('forenses')">Buscar Casos Forenses</button>
+        </div>
+        
+        <!-- Formulário de Busca de Ocorrências -->
+        <div id="busca-ocorrencias" class="opcao-busca">
+            <h3>Busca de Ocorrências</h3>
+            
+            <div class="form-group">
+                <label for="numero-ocorrencia">Número da Ocorrência:</label>
+                <input type="text" id="numero-ocorrencia" placeholder="Digite o número da ocorrência">
+            </div>
+            
+            <div class="form-group">
+                <label for="data-ocorrencia">Data da Ocorrência:</label>
+                <input type="date" id="data-ocorrencia">
+            </div>
+            
+            <div class="form-group">
+                <label for="local-ocorrencia">Local da Ocorrência:</label>
+                <input type="text" id="local-ocorrencia" placeholder="Digite o local da ocorrência">
+            </div>
+            
+            <div class="form-group">
+                <label for="tipo-ocorrencia">Tipo de Ocorrência:</label>
+                <select id="tipo-ocorrencia">
+                    <option value="">Selecione um tipo</option>
+                    <option value="furto">Furto</option>
+                    <option value="roubo">Roubo</option>
+                    <option value="homicidio">Homicídio</option>
+                    <option value="acidente">Acidente</option>
+                    <option value="outro">Outro</option>
+                </select>
+            </div>
+            
+            <button class="buscar-btn" onclick="buscarOcorrencias()">Buscar Ocorrências</button>
+            
+            <div id="resultados-ocorrencias" class="resultados">
+                <h3>Resultados da Busca</h3>
+                <div class="resultado-item">
+                    <p><strong>Ocorrência:</strong> #12345</p>
+                    <p><strong>Data:</strong> 08/04/2025</p>
+                    <p><strong>Local:</strong> Av. Paulista, 1000</p>
+                    <p><strong>Tipo:</strong> Furto</p>
+                </div>
+                <div class="resultado-item">
+                    <p><strong>Ocorrência:</strong> #12346</p>
+                    <p><strong>Data:</strong> 09/04/2025</p>
+                    <p><strong>Local:</strong> Rua Augusta, 500</p>
+                    <p><strong>Tipo:</strong> Roubo</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Formulário de Busca de Casos Forenses -->
+        <div id="busca-forenses" class="opcao-busca">
+            <h3>Busca de Casos Forenses</h3>
+            
+            <div class="form-group">
+                <label for="numero-caso">Número do Caso:</label>
+                <input type="text" id="numero-caso" placeholder="Digite o número do caso">
+            </div>
+            
+            <div class="form-group">
+                <label for="data-caso">Data de Abertura:</label>
+                <input type="date" id="data-caso">
+            </div>
+            
+            <div class="form-group">
+                <label for="perito-responsavel">Perito Responsável:</label>
+                <input type="text" id="perito-responsavel" placeholder="Digite o nome do perito">
+            </div>
+            
+            <div class="form-group">
+                <label for="tipo-analise">Tipo de Análise:</label>
+                <select id="tipo-analise">
+                    <option value="">Selecione um tipo</option>
+                    <option value="dna">Análise de DNA</option>
+                    <option value="digital">Perícia Digital</option>
+                    <option value="balistica">Balística</option>
+                    <option value="documentoscopia">Documentoscopia</option>
+                    <option value="outro">Outro</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="status-caso">Status do Caso:</label>
+                <select id="status-caso">
+                    <option value="">Selecione um status</option>
+                    <option value="aberto">Aberto</option>
+                    <option value="em-analise">Em Análise</option>
+                    <option value="concluido">Concluído</option>
+                    <option value="arquivado">Arquivado</option>
+                </select>
+            </div>
+            
+            <button class="buscar-btn" onclick="buscarCasosForenses()">Buscar Casos Forenses</button>
+            
+            <div id="resultados-forenses" class="resultados">
+                <h3>Resultados da Busca</h3>
+                <div class="resultado-item">
+                    <p><strong>Caso:</strong> #F-2025-0123</p>
+                    <p><strong>Data de Abertura:</strong> 05/04/2025</p>
+                    <p><strong>Perito:</strong> Dr. Carlos Silva</p>
+                    <p><strong>Tipo de Análise:</strong> Balística</p>
+                    <p><strong>Status:</strong> Em Análise</p>
+                </div>
+                <div class="resultado-item">
+                    <p><strong>Caso:</strong> #F-2025-0124</p>
+                    <p><strong>Data de Abertura:</strong> 07/04/2025</p>
+                    <p><strong>Perito:</strong> Dra. Ana Souza</p>
+                    <p><strong>Tipo de Análise:</strong> Perícia Digital</p>
+                    <p><strong>Status:</strong> Aberto</p>
+                </div>
+            </div>
+        </div>
+        
+        <button class="voltar-btn" onclick="window.location.href='telaadmin.html'">Voltar ao Painel</button>
+    </div>
+
+    <script>
+        function mostrarFormulario(tipo) {
+            // Esconde todos os formulários
+            document.getElementById('busca-ocorrencias').style.display = 'none';
+            document.getElementById('busca-forenses').style.display = 'none';
+            
+            // Esconde os resultados
+            document.getElementById('resultados-ocorrencias').style.display = 'none';
+            document.getElementById('resultados-forenses').style.display = 'none';
+            
+            // Mostra o formulário selecionado
+            if (tipo === 'ocorrencias') {
+                document.getElementById('busca-ocorrencias').style.display = 'flex';
+            } else if (tipo === 'forenses') {
+                document.getElementById('busca-forenses').style.display = 'flex';
+            }
+        }
+        
+        function buscarOcorrencias() {
+            // Simulação de busca - em um sistema real, isso seria uma chamada AJAX
+            document.getElementById('resultados-ocorrencias').style.display = 'block';
+            alert('Busca de ocorrências realizada com sucesso!');
+        }
+        
+        function buscarCasosForenses() {
+            // Simulação de busca - em um sistema real, isso seria uma chamada AJAX
+            document.getElementById('resultados-forenses').style.display = 'block';
+            alert('Busca de casos forenses realizada com sucesso!');
+        }
+    </script>
+</body>
+</html>

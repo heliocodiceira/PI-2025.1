@@ -1,16 +1,13 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Registro de Ocorrências Criminais</title>
+    <title>Sistema de Registro de Ocorrências Criminais - Cadastro</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
             background-color: #007BFF;
             margin: 0;
             padding: 0;
@@ -22,7 +19,6 @@
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
             width: 90%;
             max-width: 800px;
             margin: 40px auto;
@@ -31,15 +27,15 @@
         h1, h2, h3 {
             margin-bottom: 20px;
             color: #333;
+            text-align: center;
         }
         
-        .section {
-            margin-bottom: 30px;
+        .form-section {
+            margin-bottom: 25px;
             padding: 15px;
             border: 1px solid #ddd;
             border-radius: 5px;
             background-color: #f8f9fa;
-            text-align: left;
         }
         
         .section-title {
@@ -49,52 +45,165 @@
             color: #444;
         }
         
-        .botoes {
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .btn-container {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 15px;
             margin-top: 20px;
         }
         
-        .botoes a, .botoes button {
-            width: 45%;
-            margin: 10px 0;
-            padding: 10px;
+        .btn {
+            padding: 12px 25px;
             border: none;
             border-radius: 5px;
             font-size: 16px;
-            cursor: pointer;
             font-weight: bold;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
         
-        .btn-submit {
+        .btn-primary {
             background-color: #007BFF;
             color: white;
         }
         
-        .btn-submit:hover {
+        .btn-primary:hover {
             background-color: #0056b3;
         }
         
-        .btn-busca {
-            background-color: #28a745;
-            color: white;
-        }
-        
-        .btn-busca:hover {
-            background-color: #218838;
-        }
-        
-        .excluir {
+        .btn-danger {
             background-color: #dc3545;
             color: white;
         }
         
-        .excluir:hover {
+        .btn-danger:hover {
             background-color: #c82333;
+        }
+        
+        .map-container {
+            height: 300px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .coords-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .coords-container .form-group {
+            flex: 1;
+        }
+        
+        .file-input-container {
+            margin-bottom: 15px;
+        }
+        
+        .file-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        
+        .preview-item {
+            width: 100px;
+            height: 100px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .preview-remove {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .camera-container {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        #camera-preview {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f5f5f5;
+            margin: 0 auto 10px auto;
+        }
+        
+        .camera-controls {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        #camera-output {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
         }
         
         .overlay {
@@ -110,16 +219,20 @@
             z-index: 1000;
         }
         
-        .mensagem-confirmacao {
+        .alert-modal {
             background-color: white;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
             text-align: center;
-            max-width: 300px;
+            max-width: 400px;
         }
         
-        .mensagem-confirmacao button {
+        .alert-modal h3 {
+            margin-top: 0;
+        }
+        
+        .alert-modal button {
             margin-top: 15px;
             padding: 8px 16px;
             background-color: #007BFF;
@@ -129,8 +242,29 @@
             cursor: pointer;
         }
         
-        .mensagem-confirmacao button:hover {
-            background-color: #0056b3;
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+        }
+        
+        .col-6 {
+            flex: 0 0 50%;
+            max-width: 50%;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+        
+        @media (max-width: 768px) {
+            .col-6 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+            
+            .coords-container {
+                flex-direction: column;
+                gap: 5px;
+            }
         }
     </style>
 </head>
@@ -138,80 +272,578 @@
     <div class="container">
         <h1>Registro de Ocorrência Criminal</h1>
         
-        <div class="section">
-            <h3 class="section-title">Buscar Caso Existente</h3>
-            <p>Clique no botão abaixo para carregar um caso previamente registrado.</p>
-        </div>
-        
-        <!-- Botões -->
-        <div class="botoes">
-            <a href="telaregistro.html" class="btn-submit">Registrar Ocorrência</a>
-            <button type="button" class="btn-busca">Buscar Caso Existente</button>
-            <button type="button" class="excluir">Cancelar</button>
+        <form id="ocorrencia-form">
+            <!-- Seção: Informações do Crime -->
+            <div class="form-section">
+                <h3 class="section-title">Informações do Crime</h3>
+                
+                <div class="form-group">
+                    <label for="tipoCrime">Tipo de Crime:</label>
+                    <select id="tipoCrime" class="form-control" required>
+                        <option value="">Selecione o tipo de crime</option>
+                        <option value="Furto">Furto</option>
+                        <option value="Roubo">Roubo</option>
+                        <option value="Homicídio">Homicídio</option>
+                        <option value="Lesão Corporal">Lesão Corporal</option>
+                        <option value="Violência Doméstica">Violência Doméstica</option>
+                        <option value="Estelionato">Estelionato</option>
+                        <option value="Tráfico de Drogas">Tráfico de Drogas</option>
+                        <option value="Outro">Outro</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="especificacaoCrimeGroup" style="display: none;">
+                    <label for="especificacaoCrime">Especificação do Crime:</label>
+                    <input type="text" id="especificacaoCrime" class="form-control" placeholder="Descreva o tipo específico de crime">
+                </div>
+                
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="dataCrime">Data do Crime:</label>
+                            <input type="date" id="dataCrime" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="horaCrime">Hora do Crime:</label>
+                            <input type="time" id="horaCrime" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="descricaoCrime">Descrição Detalhada da Ocorrência:</label>
+                    <textarea id="descricaoCrime" class="form-control" placeholder="Descreva com detalhes o que aconteceu" required></textarea>
+                </div>
+            </div>
+            
+            <!-- Seção: Informações da Vítima -->
+            <div class="form-section">
+                <h3 class="section-title">Informações da Vítima</h3>
+                
+                <div class="form-group">
+                    <label for="nomeVitima">Nome da Vítima:</label>
+                    <input type="text" id="nomeVitima" class="form-control" placeholder="Nome completo da vítima" required>
+                </div>
+                
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="documentoVitima">Documento (CPF/RG):</label>
+                            <input type="text" id="documentoVitima" class="form-control" placeholder="CPF ou RG da vítima">
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="telefoneVitima">Telefone para Contato:</label>
+                            <input type="tel" id="telefoneVitima" class="form-control" placeholder="(00) 00000-0000">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="enderecoVitima">Endereço da Vítima:</label>
+                    <input type="text" id="enderecoVitima" class="form-control" placeholder="Rua, número, bairro">
+                </div>
+                
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="cidadeVitima">Cidade:</label>
+                            <input type="text" id="cidadeVitima" class="form-control" placeholder="Cidade">
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="ufVitima">UF:</label>
+                            <select id="ufVitima" class="form-control">
+                                <option value="">Selecione</option>
+                                <option value="AC">AC</option>
+                                <option value="AL">AL</option>
+                                <option value="AM">AM</option>
+                                <option value="AP">AP</option>
+                                <option value="BA">BA</option>
+                                <option value="CE">CE</option>
+                                <option value="DF">DF</option>
+                                <option value="ES">ES</option>
+                                <option value="GO">GO</option>
+                                <option value="MA">MA</option>
+                                <option value="MG">MG</option>
+                                <option value="MS">MS</option>
+                                <option value="MT">MT</option>
+                                <option value="PA">PA</option>
+                                <option value="PB">PB</option>
+                                <option value="PE">PE</option>
+                                <option value="PI">PI</option>
+                                <option value="PR">PR</option>
+                                <option value="RJ">RJ</option>
+                                <option value="RN">RN</option>
+                                <option value="RO">RO</option>
+                                <option value="RR">RR</option>
+                                <option value="RS">RS</option>
+                                <option value="SC">SC</option>
+                                <option value="SE">SE</option>
+                                <option value="SP">SP</option>
+                                <option value="TO">TO</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Seção: Informações do Criminoso (se houver) -->
+            <div class="form-section">
+                <h3 class="section-title">Informações do Criminoso (se identificado)</h3>
+                
+                <div class="form-group">
+                    <label for="nomeCriminoso">Nome do Suspeito/Criminoso:</label>
+                    <input type="text" id="nomeCriminoso" class="form-control" placeholder="Nome completo (se souber)">
+                </div>
+                
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="documentoCriminoso">Documento (CPF/RG):</label>
+                            <input type="text" id="documentoCriminoso" class="form-control" placeholder="CPF ou RG (se souber)">
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="descricaoCriminoso">Descrição Física:</label>
+                            <input type="text" id="descricaoCriminoso" class="form-control" placeholder="Características físicas identificáveis">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Seção: Local do Crime -->
+            <div class="form-section">
+                <h3 class="section-title">Local do Crime</h3>
+                
+                <div class="form-group">
+                    <label for="localCrime">Endereço do Local:</label>
+                    <input type="text" id="localCrime" class="form-control" placeholder="Rua, número, bairro" required>
+                </div>
+                
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="cidadeCrime">Cidade:</label>
+                            <input type="text" id="cidadeCrime" class="form-control" placeholder="Cidade" required>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="ufCrime">UF:</label>
+                            <select id="ufCrime" class="form-control" required>
+                                <option value="">Selecione</option>
+                                <option value="AC">AC</option>
+                                <option value="AL">AL</option>
+                                <option value="AM">AM</option>
+                                <option value="AP">AP</option>
+                                <option value="BA">BA</option>
+                                <option value="CE">CE</option>
+                                <option value="DF">DF</option>
+                                <option value="ES">ES</option>
+                                <option value="GO">GO</option>
+                                <option value="MA">MA</option>
+                                <option value="MG">MG</option>
+                                <option value="MS">MS</option>
+                                <option value="MT">MT</option>
+                                <option value="PA">PA</option>
+                                <option value="PB">PB</option>
+                                <option value="PE">PE</option>
+                                <option value="PI">PI</option>
+                                <option value="PR">PR</option>
+                                <option value="RJ">RJ</option>
+                                <option value="RN">RN</option>
+                                <option value="RO">RO</option>
+                                <option value="RR">RR</option>
+                                <option value="RS">RS</option>
+                                <option value="SC">SC</option>
+                                <option value="SE">SE</option>
+                                <option value="SP">SP</option>
+                                <option value="TO">TO</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="map">Localização no Mapa:</label>
+                    <div id="map" class="map-container"></div>
+                </div>
+                
+                <div class="coords-container">
+                    <div class="form-group">
+                        <label for="latitude">Latitude:</label>
+                        <input type="text" id="latitude" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="longitude">Longitude:</label>
+                        <input type="text" id="longitude" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button type="button" id="btn-get-location" class="btn btn-primary form-control">Obter Localização Atual</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Seção: Informações do Perito -->
+            <div class="form-section">
+                <h3 class="section-title">Perito Responsável</h3>
+                
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="nomePerito">Nome do Perito:</label>
+                            <input type="text" id="nomePerito" class="form-control" placeholder="Nome completo do perito" required>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="matriculaPerito">Matrícula:</label>
+                            <input type="text" id="matriculaPerito" class="form-control" placeholder="Número da matrícula" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Seção: Provas e Evidências -->
+            <div class="form-section">
+                <h3 class="section-title">Provas e Evidências</h3>
+                
+                <div class="form-group">
+                    <label for="descricaoProvas">Descrição das Provas:</label>
+                    <textarea id="descricaoProvas" class="form-control" placeholder="Descreva as provas e evidências coletadas"></textarea>
+                </div>
+                
+                <!-- Upload de Arquivos -->
+                <div class="form-group file-input-container">
+                    <label for="uploadArquivos">Upload de Arquivos (fotos, documentos, etc.):</label>
+                    <input type="file" id="uploadArquivos" class="form-control" multiple>
+                    <small>Formatos aceitos: JPG, PNG, PDF, DOC. Tamanho máximo: 10MB por arquivo.</small>
+                    
+                    <div id="file-preview" class="file-preview"></div>
+                </div>
+                
+                <!-- Captura de Câmera - Simplificado para um único botão -->
+                <div class="form-group camera-container">
+                    <label>Capturar Foto de Evidência:</label>
+                    <div id="camera-preview"></div>
+                    <div class="camera-controls">
+                        <button type="button" id="btn-capture-photo" class="btn btn-primary">Registrar Foto</button>
+                    </div>
+                    <div id="camera-output" class="file-preview"></div>
+                </div>
+            </div>
+            
+            <!-- Botões de Ação -->
+            <div class="btn-container">
+                <button type="submit" class="btn btn-primary">Registrar Ocorrência</button>
+                <button type="button" id="btn-cancelar" class="btn btn-danger">Cancelar</button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Modal de Alerta para Sucesso no Registro -->
+    <div id="alerta-sucesso" class="overlay" style="display: none;">
+        <div class="alert-modal">
+            <h3>Ocorrência Registrada</h3>
+            <p>A ocorrência foi registrada com sucesso no sistema!</p>
+            <p>Número de protocolo: <strong id="numero-protocolo"></strong></p>
+            <button onclick="window.location.href='index.html'">Voltar ao Início</button>
         </div>
     </div>
 
     <script>
-        // Função para buscar e carregar caso existente
-        document.querySelector('.btn-busca').addEventListener('click', function() {
-            // Criar input de arquivo dinamicamente
-            const inputBusca = document.createElement('input');
-            inputBusca.type = 'file';
-            inputBusca.accept = '.json';
+        // Esperar o DOM carregar completamente
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mostrar campo de especificação quando "Outro" é selecionado
+            document.getElementById('tipoCrime').addEventListener('change', function() {
+                const especificacaoGroup = document.getElementById('especificacaoCrimeGroup');
+                especificacaoGroup.style.display = this.value === 'Outro' ? 'block' : 'none';
+            });
             
-            inputBusca.addEventListener('change', function(evento) {
-                const arquivo = evento.target.files[0];
-                if (arquivo) {
-                    const leitor = new FileReader();
-                    
-                    leitor.onload = function(e) {
-                        try {
-                            // Parsear dados do arquivo JSON
-                            const dadosCaso = JSON.parse(e.target.result);
-                            
-                            // Criar overlay de confirmação
-                            const overlay = document.createElement('div');
-                            overlay.className = 'overlay';
-                            
-                            const mensagemConfirmacao = document.createElement('div');
-                            mensagemConfirmacao.className = 'mensagem-confirmacao';
-                            mensagemConfirmacao.innerHTML = `
-                                <h3>Caso Carregado</h3>
-                                <p>O caso foi carregado com sucesso!</p>
-                                <button onclick="this.closest('.overlay').remove()">Fechar</button>
-                            `;
-                            
-                            overlay.appendChild(mensagemConfirmacao);
-                            document.body.appendChild(overlay);
-                            
-                            // Lógica de preenchimento do formulário seria implementada aqui
-                            console.log('Dados do caso carregado:', dadosCaso);
-                        } catch (erro) {
-                            // Alerta de erro
-                            const overlay = document.createElement('div');
-                            overlay.className = 'overlay';
-                            
-                            const mensagemErro = document.createElement('div');
-                            mensagemErro.className = 'mensagem-confirmacao';
-                            mensagemErro.innerHTML = `
-                                <h3>Erro ao Carregar</h3>
-                                <p>Não foi possível carregar o caso. Verifique o arquivo.</p>
-                                <button onclick="this.closest('.overlay').remove()">Fechar</button>
-                            `;
-                            
-                            overlay.appendChild(mensagemErro);
-                            document.body.appendChild(overlay);
-                            
-                            console.error(erro);
+            // Funcionalidade de obter localização atual
+            document.getElementById('btn-get-location').addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        function(position) {
+                            document.getElementById('latitude').value = position.coords.latitude;
+                            document.getElementById('longitude').value = position.coords.longitude;
+                            // Aqui você poderia atualizar o mapa com a nova posição
+                            alert('Localização obtida com sucesso!');
+                        },
+                        function(error) {
+                            console.error('Erro ao obter localização:', error);
+                            alert('Não foi possível obter sua localização atual.');
                         }
-                    };
-                    
-                    leitor.readAsText(arquivo);
+                    );
+                } else {
+                    alert('Seu navegador não suporta geolocalização.');
                 }
             });
             
-            // Acionar seleção de arquivo
-            inputBusca.click();
+            // Preview de arquivos carregados
+            document.getElementById('uploadArquivos').addEventListener('change', function(event) {
+                const filePreview = document.getElementById('file-preview');
+                filePreview.innerHTML = '';
+                
+                const files = event.target.files;
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'preview-item';
+                    
+                    if (file.type.startsWith('image/')) {
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(file);
+                        previewItem.appendChild(img);
+                    } else {
+                        const fileIcon = document.createElement('div');
+                        fileIcon.style.padding = '10px';
+                        fileIcon.textContent = file.name.split('.').pop().toUpperCase();
+                        previewItem.appendChild(fileIcon);
+                    }
+                    
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'preview-remove';
+                    removeBtn.textContent = 'X';
+                    removeBtn.onclick = function() {
+                        previewItem.remove();
+                        // Nota: Remover do input file é mais complexo e exigiria recriar o input
+                    };
+                    
+                    previewItem.appendChild(removeBtn);
+                    filePreview.appendChild(previewItem);
+                }
+            });
+            
+            // Funcionalidade de câmera simplificada - um único botão
+            let stream = null;
+            let videoElement = null;
+            
+            document.getElementById('btn-capture-photo').addEventListener('click', function() {
+                const cameraPreview = document.getElementById('camera-preview');
+                
+                // Se já estiver com a câmera ativa, capturar a foto
+                if (stream) {
+                    // Criar canvas para capturar frame do vídeo
+                    const canvas = document.createElement('canvas');
+                    canvas.width = videoElement.videoWidth;
+                    canvas.height = videoElement.videoHeight;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+                    
+                    // Converter para imagem
+                    const imageDataUrl = canvas.toDataURL('image/png');
+                    
+                    // Adicionar à preview
+                    const cameraOutput = document.getElementById('camera-output');
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'preview-item';
+                    
+                    const img = document.createElement('img');
+                    img.src = imageDataUrl;
+                    previewItem.appendChild(img);
+                    
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'preview-remove';
+                    removeBtn.textContent = 'X';
+                    removeBtn.onclick = function() {
+                        previewItem.remove();
+                    };
+                    
+                    previewItem.appendChild(removeBtn);
+                    cameraOutput.appendChild(previewItem);
+                    
+                    // Parar a câmera depois de capturar
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                    videoElement.srcObject = null;
+                    
+                    // Alterar o texto do botão para iniciar a câmera novamente
+                    this.textContent = 'Registrar Foto';
+                } 
+                // Se não estiver com a câmera ativa, iniciar a câmera
+                else {
+                    // Limpar o preview caso já exista um vídeo
+                    while (cameraPreview.firstChild) {
+                        cameraPreview.removeChild(cameraPreview.firstChild);
+                    }
+                    
+                    // Criar elemento de vídeo
+                    videoElement = document.createElement('video');
+                    videoElement.style.width = '100%';
+                    videoElement.style.height = '100%';
+                    videoElement.autoplay = true;
+                    cameraPreview.appendChild(videoElement);
+                    
+                    // Acessar a câmera
+                    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                        navigator.mediaDevices.getUserMedia({ video: true })
+                            .then(function(videoStream) {
+                                stream = videoStream;
+                                videoElement.srcObject = stream;
+                                
+                                // Alterar o texto do botão para capturar
+                                document.getElementById('btn-capture-photo').textContent = 'Capturar Foto';
+                            })
+                            .catch(function(error) {
+                                console.error('Erro ao acessar a câmera:', error);
+                                alert('Não foi possível acessar sua câmera. Verifique as permissões.');
+                            });
+                    } else {
+                        alert('Seu navegador não suporta acesso à câmera.');
+                    }
+                }
+            });
+            
+            // Submit do formulário
+            document.getElementById('ocorrencia-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                // Coletar dados do formulário
+                const ocorrencia = {
+                    id: Date.now(),
+                    tipoCrime: document.getElementById('tipoCrime').value,
+                    especificacaoCrime: document.getElementById('especificacaoCrime').value,
+                    data: document.getElementById('dataCrime').value,
+                    hora: document.getElementById('horaCrime').value,
+                    descricao: document.getElementById('descricaoCrime').value,
+                    vitima: {
+                        nome: document.getElementById('nomeVitima').value,
+                        documento: document.getElementById('documentoVitima').value,
+                        telefone: document.getElementById('telefoneVitima').value,
+                        endereco: document.getElementById('enderecoVitima').value,
+                        cidade: document.getElementById('cidadeVitima').value,
+                        uf: document.getElementById('ufVitima').value
+                    },
+                    criminoso: {
+                        nome: document.getElementById('nomeCriminoso').value,
+                        documento: document.getElementById('documentoCriminoso').value,
+                        descricao: document.getElementById('descricaoCriminoso').value
+                    },
+                    local: {
+                        endereco: document.getElementById('localCrime').value,
+                        cidade: document.getElementById('cidadeCrime').value,
+                        uf: document.getElementById('ufCrime').value,
+                        latitude: document.getElementById('latitude').value,
+                        longitude: document.getElementById('longitude').value
+                    },
+                    perito: {
+                        nome: document.getElementById('nomePerito').value,
+                        matricula: document.getElementById('matriculaPerito').value
+                    },
+                    provas: document.getElementById('descricaoProvas').value,
+                    dataRegistro: new Date().toISOString()
+                };
+                
+                // Simular armazenamento no localStorage (como no exemplo original)
+                let ocorrencias = JSON.parse(localStorage.getItem('ocorrenciasCriminais')) || [];
+                ocorrencias.push(ocorrencia);
+                localStorage.setItem('ocorrenciasCriminais', JSON.stringify(ocorrencias));
+                
+                // Gerar número de protocolo e mostrar modal de sucesso
+                const protocolo = 'OCR-' + new Date().getFullYear() + '-' + ocorrencia.id.toString().substr(-6);
+                document.getElementById('numero-protocolo').textContent = protocolo;
+                document.getElementById('alerta-sucesso').style.display = 'flex';
+            });
+            
+            // Botão cancelar
+            document.getElementById('btn-cancelar').addEventListener('click', function() {
+                if (confirm('Deseja realmente cancelar o registro? Todos os dados serão perdidos.')) {
+                    window.location.href = 'index.html';
+                }
+            });
+            
+            // Carregar mapa (mockup simples - em produção usaria API como Google Maps ou Leaflet)
+            function initMap() {
+                // Criar elemento de imagem como placeholder do mapa
+                const mapContainer = document.getElementById('map');
+                const mapPlaceholder = document.createElement('div');
+                mapPlaceholder.style.width = '100%';
+                mapPlaceholder.style.height = '100%';
+                mapPlaceholder.style.backgroundColor = '#e9ecef';
+                mapPlaceholder.style.display = 'flex';
+                mapPlaceholder.style.alignItems = 'center';
+                mapPlaceholder.style.justifyContent = 'center';
+                mapPlaceholder.innerHTML = '<p>Mapa carregado. Selecione uma localização ou use "Obter Localização Atual".</p>';
+                
+                mapContainer.appendChild(mapPlaceholder);
+                
+                // Simulação de clique no mapa para definir coordenadas
+                mapPlaceholder.addEventListener('click', function(event) {
+                    // Simular coordenadas baseadas na posição do clique
+                    const rect = mapPlaceholder.getBoundingClientRect();
+                    const x = event.clientX - rect.left;
+                    const y = event.clientY - rect.top;
+                    
+                    // Transformar posição do clique em coordenadas fictícias
+                    const lat = -23.55 + (y / rect.height) * 0.2;
+                    const lng = -46.63 + (x / rect.width) * 0.2;
+                    
+                    document.getElementById('latitude').value = lat.toFixed(6);
+                    document.getElementById('longitude').value = lng.toFixed(6);
+                    
+                    // Feedback visual
+                    const marker = document.createElement('div');
+                    marker.style.position = 'absolute';
+                    marker.style.width = '20px';
+                    marker.style.height = '20px';
+                    marker.style.backgroundColor = 'red';
+                    marker.style.borderRadius = '50%';
+                    marker.style.transform = 'translate(-50%, -50%)';
+                    marker.style.left = x + 'px';
+                    marker.style.top = y + 'px';
+                    
+                    // Remover marcadores antigos
+                    const oldMarkers = mapPlaceholder.querySelectorAll('.map-marker');
+                    oldMarkers.forEach(m => m.remove());
+                    
+                    marker.className = 'map-marker';
+                    mapPlaceholder.appendChild(marker);
+                });
+            }
+            
+            // Validação de dados do formulário
+            function validarFormulario() {
+                // Implementar validações adicionais aqui
+                const tipoCrime = document.getElementById('tipoCrime').value;
+                if (tipoCrime === 'Outro' && document.getElementById('especificacaoCrime').value.trim() === '') {
+                    alert('Por favor, especifique o tipo de crime.');
+                    return false;
+                }
+                
+                // Validação de data (não pode ser futura)
+                const dataCrime = new Date(document.getElementById('dataCrime').value);
+                const hoje = new Date();
+                hoje.setHours(0, 0, 0, 0);
+                if (dataCrime > hoje) {
+                    alert('A data do crime não pode ser futura.');
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            // Inicializar mapa ao carregar a página
+            initMap();
+            
+            // Definir data máxima como hoje
+            const dataInput = document.getElementById('dataCrime');
+            const hoje = new Date();
+            const dd = String(hoje.getDate()).padStart(2, '0');
+            const mm = String(hoje.getMonth() + 1).padStart(2, '0');
+            const yyyy = hoje.getFullYear();
+            const dataHoje = yyyy + '-' + mm + '-' + dd;
+            dataInput.max = dataHoje;
+            
+            // Pré-carregar a data de hoje
+            dataInput.value = dataHoje;
         });
     </script>
 </body>

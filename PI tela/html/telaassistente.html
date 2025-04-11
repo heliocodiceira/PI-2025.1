@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assistente de Evidências e Dados Forenses</title>
+    <title>Painel do Assistente</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,77 +13,30 @@
             min-height: 100vh;
             background-color: #007BFF;
             margin: 0;
-            padding: 20px;
+            padding: 20px 0;
         }
-        
         .container {
             background: white;
-            padding: 30px;
+            padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
             width: 90%;
-            max-width: 800px;
-            margin: 20px auto;
+            max-width: 600px;
         }
-        
-        h1, h2, h3 {
-            margin-bottom: 20px;
+        h2 {
+            margin-bottom: 30px;
             color: #333;
         }
-        
-        .section {
-            margin-bottom: 30px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #f8f9fa;
-            text-align: left;
-        }
-        
-        .section-title {
-            margin-top: 0;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-            color: #444;
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        label {
-            display: block;
-            text-align: left;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        
-        input, select, textarea {
-            display: block;
-            width: 95%;
-            margin: 5px 0;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        
-        .form-row {
+        .botoes-container {
             display: flex;
+            flex-direction: column;
             gap: 15px;
-            flex-wrap: wrap;
         }
-        
-        .form-col {
-            flex: 1;
-            min-width: 250px;
-        }
-        
         button {
+            display: block;
             width: 100%;
-            margin: 10px 0;
-            padding: 10px;
+            padding: 15px;
             border: none;
             border-radius: 5px;
             font-size: 16px;
@@ -91,264 +44,228 @@
             font-weight: bold;
             background-color: #007BFF;
             color: white;
+            transition: background-color 0.3s ease;
         }
-        
         button:hover {
             background-color: #0056b3;
         }
-        
-        /* Estilos para a seção de assistente de evidências - removida a borda azul */
-        .evidence-assistant {
-            background-color: #f0f8ff;
-        }
-        
-        .file-list {
-            margin: 10px 0;
-            padding: 0;
-            list-style: none;
-        }
-        
-        .file-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #e9ecef;
-            padding: 8px 12px;
-            margin-bottom: 8px;
-            border-radius: 4px;
-        }
-        
-        .file-info {
-            display: flex;
-            align-items: center;
-        }
-        
-        .file-icon {
-            margin-right: 10px;
-            color: #6c757d;
-        }
-        
-        .file-name {
-            font-weight: 500;
-        }
-        
-        .file-size {
-            color: #6c757d;
-            font-size: 0.85em;
-            margin-left: 10px;
-        }
-        
-        .file-actions button {
-            width: auto;
-            padding: 4px 8px;
-            font-size: 12px;
-            margin: 0 2px;
-        }
-        
-        .remove-file {
+        .sair-btn {
+            margin-top: 20px;
             background-color: #dc3545;
         }
-        
-        .evidence-collection {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e9f7ff;
-            border-radius: 5px;
-            border: 1px solid #b8daff;
+        .sair-btn:hover {
+            background-color: #c82333;
         }
-        
-        .evidence-tools {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            flex-wrap: wrap;
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
         }
-        
-        .evidence-tools button {
-            flex: 1;
-            min-width: 120px;
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 600px;
         }
-        
-        .tags-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin: 10px 0;
-        }
-        
-        .tag {
-            background: #e2e6ea;
-            padding: 4px 8px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            font-size: 0.85em;
-        }
-        
-        .tag-remove {
-            margin-left: 5px;
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
             cursor: pointer;
-            color: #6c757d;
         }
-        
-        /* Para telas menores */
-        @media (max-width: 768px) {
-            .container {
-                width: 95%;
-                padding: 15px;
-            }
-            
-            .form-row {
-                flex-direction: column;
-                gap: 5px;
-            }
-            
-            .form-col {
-                width: 100%;
-            }
-            
-            .evidence-tools {
-                flex-direction: column;
-            }
-            
-            .evidence-tools button {
-                width: 100%;
-            }
+        .close:hover {
+            color: black;
+        }
+        .ocorrencia-item {
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: left;
+        }
+        .ocorrencia-item:hover {
+            background-color: #f5f5f5;
+        }
+        .ocorrencia-item.selected {
+            background-color: #cce5ff;
+            border-color: #007BFF;
+        }
+        .ocorrencia-lista {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        .search-box {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="section evidence-assistant">
-            <h3 class="section-title">Assistente de Evidências e Dados Forenses</h3>
-            
-            <div class="form-group">
-                <label for="tipo-evidencia">Tipo de Evidência:</label>
-                <select id="tipo-evidencia" name="tipo-evidencia">
-                    <option value="" selected disabled>-- Selecione o tipo --</option>
-                    <option value="fotografia">Fotografia</option>
-                    <option value="video">Vídeo</option>
-                    <option value="audio">Áudio</option>
-                    <option value="digital">Evidência Digital</option>
-                    <option value="biologica">Amostra Biológica</option>
-                    <option value="balistica">Análise Balística</option>
-                    <option value="documento">Documento</option>
-                    <option value="laudo">Laudo Técnico</option>
-                    <option value="impressao-digital">Impressão Digital</option>
-                    <option value="outro">Outro</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="descricao-evidencia">Descrição detalhada da evidência:</label>
-                <textarea id="descricao-evidencia" name="descricao-evidencia" rows="4" placeholder="Descreva a evidência, onde foi encontrada, características, relevância para o caso, etc."></textarea>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-col">
-                    <div class="form-group">
-                        <label for="data-coleta">Data da Coleta:</label>
-                        <input type="date" id="data-coleta" name="data-coleta">
-                    </div>
-                </div>
-                <div class="form-col">
-                    <div class="form-group">
-                        <label for="hora-coleta">Hora da Coleta:</label>
-                        <input type="time" id="hora-coleta" name="hora-coleta">
-                    </div>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="responsavel-coleta">Responsável pela Coleta:</label>
-                <input type="text" id="responsavel-coleta" name="responsavel-coleta">
-            </div>
-            
-            <div class="form-group">
-                <label for="metodo-coleta">Método de Coleta/Preservação:</label>
-                <input type="text" id="metodo-coleta" name="metodo-coleta" placeholder="Ex: Embalagem estéril, recipiente lacrado, etc.">
-            </div>
-            
-            <div class="form-group">
-                <label for="etiquetas-evidencia">Etiquetas/Tags para classificação:</label>
-                <input type="text" id="etiquetas-evidencia" name="etiquetas-evidencia" placeholder="Digite etiquetas separadas por vírgula (ex: alta prioridade, DNA, arma)">
-            </div>
-            
-            <div class="tags-container">
-                <div class="tag">Alta Prioridade <span class="tag-remove">×</span></div>
-                <div class="tag">Evidência Chave <span class="tag-remove">×</span></div>
-                <div class="tag">Pendente de Análise <span class="tag-remove">×</span></div>
-            </div>
-            
-            <div class="evidence-collection">
-                <h4>Arquivos e Documentos</h4>
-                <p>Adicione arquivos relacionados à evidência (fotos, documentos, laudos, resultados de exames)</p>
+        <h2>Painel do Assistente - Sistema de Gerenciamento Forense</h2>
                 
-                <div class="form-group">
-                    <input type="file" id="arquivos-evidencia" name="arquivos-evidencia" multiple>
-                </div>
-                
-                <div class="file-list">
-                    <div class="file-item">
-                        <div class="file-info">
-                            <span class="file-icon">📄</span>
-                            <span class="file-name">Laudo_Preliminar.pdf</span>
-                            <span class="file-size">(2.4 MB)</span>
-                        </div>
-                        <div class="file-actions">
-                            <button type="button" class="remove-file">Remover</button>
-                        </div>
-                    </div>
-                    <div class="file-item">
-                        <div class="file-info">
-                            <span class="file-icon">🖼️</span>
-                            <span class="file-name">Local_Crime_01.jpg</span>
-                            <span class="file-size">(3.1 MB)</span>
-                        </div>
-                        <div class="file-actions">
-                            <button type="button" class="remove-file">Remover</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="evidence-tools">
-                    <button type="button">Adicionar Mais Evidências</button>
-                    <button type="button">Gerar Relatório de Evidências</button>
-                    <button type="button">Vincular a Outra Ocorrência</button>
-                </div>
+        <div class="botoes-container">
+            <button onclick="abrirModalBusca()">Buscar Ocorrência</button>
+            <button id="incluirLaudoBtn" onclick="incluirLaudo()">Incluir Laudo</button>
+            <button class="sair-btn" onclick="alert('Saindo do sistema...')">Sair</button>
+        </div>
+    </div>
+
+    <!-- Modal de Busca de Ocorrências -->
+    <div id="modalBusca" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModalBusca()">&times;</span>
+            <h3>Buscar Ocorrência</h3>
+            <input type="text" id="searchInput" class="search-box" placeholder="Pesquisar por número, data ou descrição..." onkeyup="filtrarOcorrencias()">
+            
+            <div class="ocorrencia-lista" id="listaOcorrencias">
+                <!-- Aqui as ocorrências serão carregadas dinamicamente -->
             </div>
             
-            <div class="form-group">
-                <label for="cadeia-custodia">Cadeia de Custódia:</label>
-                <textarea id="cadeia-custodia" name="cadeia-custodia" rows="3" placeholder="Registre quem teve acesso à evidência, quando e por que motivo"></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="resultados-analise">Resultados de Análise:</label>
-                <textarea id="resultados-analise" name="resultados-analise" rows="4" placeholder="Registre os resultados de análises laboratoriais ou periciais realizadas"></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="notas-adicionais">Notas Adicionais e Observações:</label>
-                <textarea id="notas-adicionais" name="notas-adicionais" rows="3"></textarea>
+            <div class="actions">
+                <button onclick="fecharModalBusca()">Cancelar</button>
+                <button onclick="selecionarEfechar()">Selecionar</button>
             </div>
         </div>
     </div>
-    
+
     <script>
-        // Funcionalidade básica para botões de remover tag
-        document.querySelectorAll('.tag-remove').forEach(button => {
-            button.addEventListener('click', function() {
-                this.parentElement.remove();
+        // Variáveis globais
+        let ocorrencias = [];
+        let ocorrenciaSelecionada = null;
+
+        // Função que seria usada para carregar ocorrências do banco de dados
+        // Esta é uma simulação - na implementação real, você faria uma requisição AJAX/fetch para seu backend
+        function carregarOcorrencias() {
+            // Simulação de dados que viriam do seu banco de dados
+            ocorrencias = [
+                { id: 1, numero: "OCR-2025-001", data: "10/04/2025", descricao: "Invasão residencial em São Paulo" },
+                { id: 2, numero: "OCR-2025-002", data: "09/04/2025", descricao: "Fraude eletrônica" },
+                { id: 3, numero: "OCR-2025-003", data: "08/04/2025", descricao: "Perícia de local de crime" },
+                { id: 4, numero: "OCR-2025-004", data: "07/04/2025", descricao: "Análise de documentos falsificados" },
+                { id: 5, numero: "OCR-2025-005", data: "06/04/2025", descricao: "Exame de equipamentos eletrônicos" },
+                { id: 6, numero: "OCR-2025-006", data: "05/04/2025", descricao: "Avaliação de danos materiais" },
+                { id: 7, numero: "OCR-2025-007", data: "04/04/2025", descricao: "Análise de vestígios biológicos" }
+            ];
+            exibirOcorrencias(ocorrencias);
+        }
+
+        // Exibe as ocorrências na lista
+        function exibirOcorrencias(listaParaExibir) {
+            const listaElement = document.getElementById('listaOcorrencias');
+            listaElement.innerHTML = '';
+
+            if (listaParaExibir.length === 0) {
+                listaElement.innerHTML = '<p>Nenhuma ocorrência encontrada.</p>';
+                return;
+            }
+
+            listaParaExibir.forEach(ocorrencia => {
+                const item = document.createElement('div');
+                item.className = 'ocorrencia-item';
+                item.dataset.id = ocorrencia.id;
+                item.innerHTML = `
+                    <strong>${ocorrencia.numero}</strong> - ${ocorrencia.data}<br>
+                    ${ocorrencia.descricao}
+                `;
+                
+                item.addEventListener('click', function() {
+                    // Remove a seleção anterior
+                    document.querySelectorAll('.ocorrencia-item').forEach(el => {
+                        el.classList.remove('selected');
+                    });
+                    
+                    // Adiciona a classe selected ao item clicado
+                    this.classList.add('selected');
+                    
+                    // Armazena a ocorrência selecionada
+                    ocorrenciaSelecionada = ocorrencia;
+                });
+
+                listaElement.appendChild(item);
             });
-        });
-        
-        // Funcionalidade básica para botões de remover arquivo
-        document.querySelectorAll('.remove-file').forEach(button => {
-            button.addEventListener('click', function() {
-                this.closest('.file-item').remove();
-            });
-        });
+        }
+
+        // Filtra as ocorrências conforme o usuário digita na caixa de pesquisa
+        function filtrarOcorrencias() {
+            const termo = document.getElementById('searchInput').value.toLowerCase();
+            
+            if (termo === '') {
+                exibirOcorrencias(ocorrencias);
+                return;
+            }
+            
+            const ocorrenciasFiltradas = ocorrencias.filter(ocorrencia => 
+                ocorrencia.numero.toLowerCase().includes(termo) || 
+                ocorrencia.data.toLowerCase().includes(termo) || 
+                ocorrencia.descricao.toLowerCase().includes(termo)
+            );
+            
+            exibirOcorrencias(ocorrenciasFiltradas);
+        }
+
+        // Abre o modal de busca e carrega as ocorrências
+        function abrirModalBusca() {
+            document.getElementById('modalBusca').style.display = 'block';
+            carregarOcorrencias();
+        }
+
+        // Fecha o modal de busca
+        function fecharModalBusca() {
+            document.getElementById('modalBusca').style.display = 'none';
+        }
+
+        // Seleciona a ocorrência e fecha o modal
+        function selecionarEfechar() {
+            if (ocorrenciaSelecionada) {
+                // Atualiza o botão "Incluir Laudo" para mostrar qual ocorrência está selecionada
+                const incluirBtn = document.getElementById('incluirLaudoBtn');
+                incluirBtn.textContent = `Incluir Laudo - ${ocorrenciaSelecionada.numero}`;
+                
+                fecharModalBusca();
+            } else {
+                alert('Por favor, selecione uma ocorrência.');
+            }
+        }
+
+        // Função para o botão "Incluir Laudo"
+        function incluirLaudo() {
+            if (ocorrenciaSelecionada) {
+                // Aqui você redirecionaria para a página de inclusão de laudo
+                // passando o ID da ocorrência selecionada
+                window.location.href = `tela01assistente.html?ocorrenciaId=${ocorrenciaSelecionada.id}`;
+            } else {
+                alert('Por favor, selecione uma ocorrência primeiro.');
+                abrirModalBusca();
+            }
+        }
+
+        // Quando a janela é clicada, fechar o modal se o clique for fora do conteúdo
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalBusca');
+            if (event.target === modal) {
+                fecharModalBusca();
+            }
+        };
     </script>
 </body>
 </html>
